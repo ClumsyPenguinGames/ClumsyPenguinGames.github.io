@@ -1,13 +1,16 @@
-/* Reset and basics */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Poppins:wght@400;500&display=swap');
+
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Body */
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #e64a19, #d84315); /* deeper orange tones */
+  background: linear-gradient(135deg, #f9622f, #e65100);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -15,16 +18,11 @@ body {
   text-align: center;
 }
 
-/* Centering */
+/* Center container */
 .container {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-}
-
-/* Title */
-h1 {
-  font-siz
+  padding: 2re
