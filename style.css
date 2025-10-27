@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #ff7043, #ff5722);
+  background: linear-gradient(135deg, #e64a19, #d84315); /* deeper orange tones */
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -27,50 +27,4 @@ body {
 
 /* Title */
 h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-h1 span {
-  color: #b388ff; /* Royal purple accent */
-}
-
-/* Tagline */
-.tagline {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-  font-weight: 400;
-}
-
-/* Social links */
-.social-links {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.social-links a {
-  text-decoration: none;
-  background-color: #b388ff;
-  color: white;
-  padding: 0.8rem 1.4rem;
-  border-radius: 2rem;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.social-links a:hover {
-  background-color: #9575cd;
-  transform: translateY(-3px);
-}
-
-/* Footer */
-footer {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 1rem 0;
-  font-size: 0.9rem;
-}
+  font-siz
