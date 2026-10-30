@@ -2,206 +2,698 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Draw Beta | Clumsy Penguin Games</title>
+
   <link rel="stylesheet" href="style.css">
+
   <style>
-    .app-container { width: min(100%, 850px); margin: 0 auto; padding: 1.5rem; text-align: left; }
-    .app-header { text-align: center; margin-bottom: 1.5rem; }
-    .app-header h1 { font-size: clamp(2rem, 7vw, 3rem); }
-    .app-header h1 span { color: #FBEEDC; }
-    .app-header p { line-height: 1.6; }
-    .beta-badge { display: inline-block; background: #FBEEDC; color: #2F2D63; border-radius: 50px; padding: .25rem .7rem; font-size: .75rem; font-weight: 600; letter-spacing: .08em; margin-bottom: .7rem; }
-    .app-card { background: #FBEEDC; color: #292744; border-radius: 16px; padding: 1.25rem; margin: 1rem 0; box-shadow: 0 4px 14px rgba(47,45,99,.15); }
-    .app-card h2 { font-family: 'Baloo 2', cursive; font-size: 1.45rem; margin-bottom: .5rem; color: #2F2D63; }
-    .app-card p { line-height: 1.55; }
-    .app-container textarea { display: block; width: 100%; min-height: 130px; resize: vertical; padding: .75rem; border: 1px solid #b9b3c9; border-radius: 10px; font: inherit; color: #292744; background: white; margin: .7rem 0; }
-    .app-container button { border: 0; border-radius: 50px; padding: .7rem 1rem; font: inherit; font-weight: 600; cursor: pointer; margin: .35rem .35rem .1rem 0; }
-    .app-container button:focus-visible, .app-container textarea:focus-visible, .app-container a:focus-visible { outline: 3px solid #7468c4; outline-offset: 3px; }
-    .app-container button:disabled { opacity: .45; cursor: not-allowed; }
-    .app-primary { background: #2F2D63; color: #FBEEDC; }
-    .app-secondary { background: #e6e1f4; color: #2F2D63; }
-    .app-danger { background: #f7d9d7; color: #742b26; }
-    .app-status { color: #5f5a70; font-size: .92rem; margin-top: .7rem; }
-    .app-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: .8rem 0; }
-    .app-choice { display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; padding: 1rem; border: 1px solid #d2c9e9; border-radius: 12px; background: white; overflow-wrap: anywhere; }
-    .app-choice p { margin-bottom: 1rem; font-size: 1.05rem; }
-    .app-empty { color: #6e687d; padding: .5rem 0; }
-    .app-container ul { padding-left: 1.4rem; margin-top: .6rem; }
-    .app-container li { margin: .35rem 0; overflow-wrap: anywhere; }
-    .back-link { display: inline-block; margin-top: 1rem; color: #FBEEDC; font-weight: 600; text-decoration-thickness: 2px; text-underline-offset: 4px; }
-    @media (max-width: 540px) { .app-choices { grid-template-columns: 1fr; } .app-container { padding: 1rem; } .app-card { padding: 1rem; } }
+    .app-container {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 24px 20px 50px;
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .beta-badge {
+      display: inline-block;
+      background: #C64521;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .app-header h1 {
+      color: #2F2D63;
+      margin-bottom: 8px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #2F2D63;
+    }
+
+    .panel {
+      background: #fffaf3;
+      border: 2px solid #e7d9c7;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 10px rgba(47, 45, 99, 0.06);
+    }
+
+    .panel h2 {
+      color: #2F2D63;
+      margin-top: 0;
+    }
+
+    .task-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .task-form input,
+    .edit-input {
+      min-width: 0;
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #d9cbb9;
+      border-radius: 10px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .action-button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 16px;
+      background: #2F2D63;
+      color: white;
+      font-weight: bold;
+    }
+
+    .action-button:hover {
+      opacity: 0.88;
+    }
+
+    .secondary-button {
+      background: #e8e1f4;
+      color: #2F2D63;
+    }
+
+    .danger-button {
+      background: #f7dfd6;
+      color: #8c2e16;
+    }
+
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e7d9c7;
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      accent-color: #2F2D63;
+      cursor: pointer;
+    }
+
+    .task-text {
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .small-button {
+      border: none;
+      border-radius: 8px;
+      padding: 7px 9px;
+      background: #e8e1f4;
+      color: #2F2D63;
+    }
+
+    .empty-message {
+      color: #716b78;
+      font-style: italic;
+      padding: 8px 0;
+    }
+
+    .task-count {
+      color: #716b78;
+      font-size: 0.9rem;
+      margin-top: -10px;
+      margin-bottom: 14px;
+    }
+
+    .draw-area {
+      text-align: center;
+    }
+
+    .draw-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .draw-card {
+      border: 2px solid #e7d9c7;
+      border-radius: 14px;
+      background: white;
+      padding: 18px 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .draw-card p {
+      margin-bottom: 14px;
+      font-weight: bold;
+      color: #2F2D63;
+    }
+
+    .completed-text {
+      text-decoration: line-through;
+      color: #827b84;
+    }
+
+    .completed-date {
+      display: block;
+      color: #827b84;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 12px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #716b78;
+      font-size: 0.9rem;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 540px) {
+      .task-form {
+        flex-direction: column;
+      }
+
+      .task-item {
+        flex-wrap: wrap;
+      }
+
+      .task-actions {
+        margin-left: 30px;
+      }
+
+      .draw-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+    }
   </style>
 </head>
+
 <body>
   <main class="app-container">
+
+    <a class="back-link" href="index.html">← Clumsy Penguin Games</a>
+
     <header class="app-header">
       <span class="beta-badge">BETA PROJECT</span>
-      <h1>Task Draw</h1>
-      <p>Put your tasks in the pool, then let chance choose between two.</p>
-      <a class="back-link" href="index.html">← Back to Clumsy Penguin Games</a>
+      <h1>🐸 Task Draw</h1>
+      <p>Rescue a frog, one task at a time.</p>
     </header>
 
-    <section class="app-card">
-      <h2>1. Your task pool</h2>
-      <p>Enter one task per line. Adding tasks keeps your current pool and completed history.</p>
-      <textarea id="taskInput" placeholder="Start a load of laundry&#10;Put away dishes&#10;Scoop the litter"></textarea>
-      <button class="app-primary" id="addTasksButton">Add tasks to pool</button>
-      <button class="app-secondary" id="replaceTasksButton">Replace pool with this list</button>
-      <p class="app-status" id="poolStatus" aria-live="polite"></p>
+    <section class="panel">
+      <h2>Add a task to your pond</h2>
+
+      <form class="task-form" id="taskForm">
+        <input
+          id="taskInput"
+          type="text"
+          placeholder="What needs doing?"
+          autocomplete="off"
+          required
+        >
+        <button class="action-button" type="submit">Add Task</button>
+      </form>
+
+      <p class="task-count" id="poolCount"></p>
+
+      <div class="section-heading">
+        <h2>Your Current Task Pool</h2>
+        <button
+          class="small-button"
+          type="button"
+          id="drawButton"
+        >
+          Draw Two
+        </button>
+      </div>
+
+      <p class="task-count">
+        Check off anything you've already finished, or edit a task right here.
+      </p>
+
+      <ul class="task-list" id="taskList"></ul>
+      <p class="empty-message" id="emptyPoolMessage" hidden>
+        Your pond is empty! Add a task to get started.
+      </p>
     </section>
 
-    <section class="app-card">
-      <h2>2. Choose your next task</h2>
-      <div id="choices" class="app-choices"><p class="app-empty">Add at least two tasks, then draw.</p></div>
-      <button class="app-primary" id="drawButton">Draw two tasks</button>
-      <button class="app-secondary" id="returnButton">Return both to pool</button>
-      <p class="app-status" id="drawStatus" aria-live="polite"></p>
+    <section class="panel" id="drawPanel">
+      <h2>Choose Your Next Task</h2>
+
+      <div class="draw-area">
+        <p id="drawInstructions">
+          Draw two tasks when you want help deciding what to do next.
+        </p>
+
+        <div class="draw-cards" id="drawCards"></div>
+
+        <button
+          class="action-button"
+          type="button"
+          id="drawAgainButton"
+          hidden
+        >
+          Draw Two Again
+        </button>
+      </div>
     </section>
 
-    <section class="app-card">
-      <h2>Completed tasks</h2>
-      <p class="app-status" id="completedStatus"></p>
-      <ul id="completedList"></ul>
-      <button class="app-danger" id="clearCompletedButton">Clear completed history</button>
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Completed Tasks</h2>
+        <button
+          class="small-button secondary-button"
+          type="button"
+          id="clearCompletedButton"
+        >
+          Clear History
+        </button>
+      </div>
+
+      <p class="task-count" id="completedCount"></p>
+
+      <ul class="task-list" id="completedList"></ul>
+
+      <p class="empty-message" id="emptyCompletedMessage">
+        No rescued frogs yet. Every little task counts!
+      </p>
     </section>
-    <p class="app-status">Beta note: tasks are saved in this browser on this device. They aren't synced between devices.</p>
+
+    <p class="footer-note">
+      Your pond is saved in this browser. 🪷
+    </p>
+
   </main>
 
-  <footer><p>© 2026 Clumsy Penguin Games</p></footer>
+  <script>
+    const STORAGE_KEY = "taskDrawBetaState";
 
-<script>
-  const STORAGE_KEY = "clumsy-penguin-task-draw-beta-v1";
-  let state = { pool: [], completed: [], choices: [] };
+    let tasks = [];
+    let completedTasks = [];
+    let drawIds = [];
 
-  const taskInput = document.getElementById("taskInput");
-  const choicesEl = document.getElementById("choices");
-  const poolStatus = document.getElementById("poolStatus");
-  const drawStatus = document.getElementById("drawStatus");
-  const completedStatus = document.getElementById("completedStatus");
-  const completedList = document.getElementById("completedList");
-  const drawButton = document.getElementById("drawButton");
-  const returnButton = document.getElementById("returnButton");
+    const taskForm = document.getElementById("taskForm");
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
+    const completedList = document.getElementById("completedList");
+    const drawCards = document.getElementById("drawCards");
+    const drawInstructions = document.getElementById("drawInstructions");
+    const drawButton = document.getElementById("drawButton");
+    const drawAgainButton = document.getElementById("drawAgainButton");
 
-  function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch (error) { console.warn("Could not save tasks:", error); }
-  }
-
-  function loadState() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (saved && Array.isArray(saved.pool) && Array.isArray(saved.completed) && Array.isArray(saved.choices)) state = saved;
-    } catch (error) { console.warn("Could not load saved tasks:", error); }
-  }
-
-  function getLines() {
-    return taskInput.value.split(/\r?\n/).map(task => task.trim()).filter(Boolean);
-  }
-
-  function addTasks(replace) {
-    const tasks = getLines();
-    if (!tasks.length) { alert("Enter at least one task, with one task per line."); return; }
-    if (replace) {
-      if (!confirm("Replace the available pool? Your completed history will stay.")) return;
-      state.pool = tasks;
-      state.choices = [];
-      drawStatus.textContent = "Pool replaced. Draw two tasks when you're ready.";
-    } else {
-      state.pool.push(...tasks);
-      drawStatus.textContent = "Tasks added. Draw two when you're ready.";
+    function createId() {
+      return Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 9);
     }
-    taskInput.value = "";
-    saveState();
-    render();
-  }
 
-  function drawTwo() {
-    if (state.choices.length) {
-      drawStatus.textContent = "Choose a task or return both before drawing again.";
-      return;
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        if (!saved) return;
+
+        if (Array.isArray(saved.tasks)) {
+          tasks = saved.tasks.map(task => {
+            if (typeof task === "string") {
+              return { id: createId(), text: task };
+            }
+
+            return {
+              id: task.id || createId(),
+              text: task.text || task.name || ""
+            };
+          }).filter(task => task.text.trim());
+        }
+
+        if (Array.isArray(saved.completedTasks)) {
+          completedTasks = saved.completedTasks.map(task => {
+            if (typeof task === "string") {
+              return {
+                id: createId(),
+                text: task,
+                completedAt: null
+              };
+            }
+
+            return {
+              id: task.id || createId(),
+              text: task.text || task.name || "",
+              completedAt: task.completedAt || null
+            };
+          }).filter(task => task.text.trim());
+        }
+
+        // Support older versions that stored completed tasks under another name.
+        if (
+          completedTasks.length === 0 &&
+          Array.isArray(saved.completed)
+        ) {
+          completedTasks = saved.completed.map(task => ({
+            id: createId(),
+            text: typeof task === "string" ? task : task.text || task.name || "",
+            completedAt: null
+          })).filter(task => task.text.trim());
+        }
+
+      } catch (error) {
+        console.error("Could not load saved tasks:", error);
+      }
     }
-    if (state.pool.length < 2) {
-      drawStatus.textContent = state.pool.length === 1 ? "Only one task remains. Add another task to draw two." : "Your pool is empty. Add some tasks first.";
-      return;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tasks,
+        completedTasks
+      }));
     }
-    const firstIndex = Math.floor(Math.random() * state.pool.length);
-    const first = state.pool.splice(firstIndex, 1)[0];
-    const secondIndex = Math.floor(Math.random() * state.pool.length);
-    const second = state.pool.splice(secondIndex, 1)[0];
-    state.choices = [first, second];
-    drawStatus.textContent = "Choose one to complete. The unchosen task will return to the pool.";
-    saveState();
-    render();
-  }
 
-  function completeTask(taskIndex) {
-    const task = state.choices[taskIndex];
-    if (task === undefined) return;
-    state.completed.push(task);
-    state.choices.splice(taskIndex, 1);
-    state.pool.push(...state.choices);
-    state.choices = [];
-    drawStatus.textContent = "Task completed: " + task;
-    saveState();
-    render();
-  }
+    function completeTask(id) {
+      const index = tasks.findIndex(task => task.id === id);
+      if (index === -1) return;
 
-  function returnBoth() {
-    if (!state.choices.length) return;
-    state.pool.push(...state.choices);
-    state.choices = [];
-    drawStatus.textContent = "Both tasks returned to the pool.";
-    saveState();
-    render();
-  }
+      const [task] = tasks.splice(index, 1);
 
-  function render() {
-    poolStatus.textContent = `${state.pool.length} task${state.pool.length === 1 ? "" : "s"} available`;
-    choicesEl.replaceChildren();
-    if (!state.choices.length) {
-      const message = document.createElement("p");
-      message.className = "app-empty";
-      message.textContent = state.pool.length >= 2 ? "Ready when you are. Draw two tasks." : "Add at least two available tasks, then draw.";
-      choicesEl.appendChild(message);
-    } else {
-      state.choices.forEach((task, index) => {
-        const card = document.createElement("div");
-        card.className = "app-choice";
-        const label = document.createElement("p");
-        label.textContent = task;
-        const button = document.createElement("button");
-        button.className = "app-primary";
-        button.textContent = "Complete this task";
-        button.addEventListener("click", () => completeTask(index));
-        card.append(label, button);
-        choicesEl.appendChild(card);
+      completedTasks.unshift({
+        ...task,
+        completedAt: new Date().toISOString()
+      });
+
+      drawIds = drawIds.filter(drawId => drawId !== id);
+
+      saveState();
+      render();
+    }
+
+    function addTask(text) {
+      const cleaned = text.trim();
+      if (!cleaned) return;
+
+      tasks.push({
+        id: createId(),
+        text: cleaned
+      });
+
+      saveState();
+      render();
+    }
+
+    function editTask(id) {
+      const task = tasks.find(item => item.id === id);
+      if (!task) return;
+
+      const newText = prompt("Edit task:", task.text);
+      if (newText === null) return;
+
+      const cleaned = newText.trim();
+      if (!cleaned) {
+        alert("A task can't be blank. Delete it if you no longer need it.");
+        return;
+      }
+
+      task.text = cleaned;
+      saveState();
+      render();
+    }
+
+    function deleteTask(id) {
+      const task = tasks.find(item => item.id === id);
+      if (!task) return;
+
+      if (!confirm(`Remove "${task.text}" from your task pool?`)) return;
+
+      tasks = tasks.filter(item => item.id !== id);
+      drawIds = drawIds.filter(drawId => drawId !== id);
+
+      saveState();
+      render();
+    }
+
+    function restoreTask(id) {
+      const index = completedTasks.findIndex(task => task.id === id);
+      if (index === -1) return;
+
+      const [task] = completedTasks.splice(index, 1);
+
+      tasks.push({
+        id: task.id,
+        text: task.text
+      });
+
+      saveState();
+      render();
+    }
+
+    function deleteCompletedTask(id) {
+      completedTasks = completedTasks.filter(task => task.id !== id);
+      saveState();
+      render();
+    }
+
+    function clearCompleted() {
+      if (completedTasks.length === 0) return;
+
+      if (!confirm("Clear your completed-task history? This cannot be undone.")) {
+        return;
+      }
+
+      completedTasks = [];
+      saveState();
+      render();
+    }
+
+    function drawTwo() {
+      if (tasks.length === 0) {
+        drawIds = [];
+        renderDraw();
+        return;
+      }
+
+      const shuffled = [...tasks].sort(() => Math.random() - 0.5);
+      drawIds = shuffled.slice(0, Math.min(2, shuffled.length))
+        .map(task => task.id);
+
+      renderDraw();
+    }
+
+    function chooseDrawnTask(id) {
+      completeTask(id);
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+
+      document.getElementById("poolCount").textContent =
+        `${tasks.length} task${tasks.length === 1 ? "" : "s"} in your pond`;
+
+      document.getElementById("emptyPoolMessage").hidden = tasks.length > 0;
+
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task-item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "task-checkbox";
+        checkbox.setAttribute("aria-label", `Mark ${task.text} complete`);
+        checkbox.addEventListener("change", () => completeTask(task.id));
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "small-button";
+        editButton.textContent = "Edit";
+        editButton.addEventListener("click", () => editTask(task.id));
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "small-button danger-button";
+        deleteButton.textContent = "Remove";
+        deleteButton.addEventListener("click", () => deleteTask(task.id));
+
+        actions.append(editButton, deleteButton);
+        li.append(checkbox, text, actions);
+        taskList.appendChild(li);
       });
     }
-    drawButton.disabled = state.choices.length > 0 || state.pool.length < 2;
-    returnButton.disabled = state.choices.length === 0;
-    completedStatus.textContent = `${state.completed.length} task${state.completed.length === 1 ? "" : "s"} completed`;
-    completedList.replaceChildren();
-    state.completed.forEach(task => {
-      const item = document.createElement("li");
-      item.textContent = task;
-      completedList.appendChild(item);
+
+    function renderDraw() {
+      drawCards.innerHTML = "";
+      drawAgainButton.hidden = tasks.length === 0;
+      drawButton.disabled = tasks.length === 0;
+
+      if (tasks.length === 0) {
+        drawInstructions.textContent =
+          "Your pond is empty. Add a task to draw a frog!";
+        return;
+      }
+
+      if (drawIds.length === 0) {
+        drawInstructions.textContent =
+          "Draw two tasks when you want help deciding what to do next.";
+        return;
+      }
+
+      const drawnTasks = drawIds
+        .map(id => tasks.find(task => task.id === id))
+        .filter(Boolean);
+
+      if (drawnTasks.length === 1) {
+        drawInstructions.textContent =
+          "Only one frog remains in your pond. Rescue it or add more tasks!";
+      } else {
+        drawInstructions.textContent =
+          "Which frog will you rescue? Choose one to mark it complete.";
+      }
+
+      drawnTasks.forEach(task => {
+        const card = document.createElement("div");
+        card.className = "draw-card";
+
+        const text = document.createElement("p");
+        text.textContent = task.text;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "action-button";
+        button.textContent = "Rescue this frog";
+        button.addEventListener("click", () => chooseDrawnTask(task.id));
+
+        card.append(text, button);
+        drawCards.appendChild(card);
+      });
+    }
+
+    function renderCompleted() {
+      completedList.innerHTML = "";
+
+      document.getElementById("completedCount").textContent =
+        `${completedTasks.length} rescued frog${completedTasks.length === 1 ? "" : "s"}`;
+
+      document.getElementById("emptyCompletedMessage").hidden =
+        completedTasks.length > 0;
+
+      document.getElementById("clearCompletedButton").disabled =
+        completedTasks.length === 0;
+
+      completedTasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task-item";
+
+        const textWrap = document.createElement("div");
+        textWrap.style.flex = "1";
+        textWrap.style.minWidth = "0";
+
+        const text = document.createElement("span");
+        text.className = "task-text completed-text";
+        text.textContent = task.text;
+        textWrap.appendChild(text);
+
+        if (task.completedAt) {
+          const date = document.createElement("span");
+          date.className = "completed-date";
+
+          const parsedDate = new Date(task.completedAt);
+          if (!Number.isNaN(parsedDate.getTime())) {
+            date.textContent = `Completed ${parsedDate.toLocaleDateString()}`;
+          }
+
+          textWrap.appendChild(date);
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "task-actions";
+
+        const restoreButton = document.createElement("button");
+        restoreButton.type = "button";
+        restoreButton.className = "small-button";
+        restoreButton.textContent = "Restore";
+        restoreButton.addEventListener("click", () => restoreTask(task.id));
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "small-button danger-button";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteCompletedTask(task.id));
+
+        actions.append(restoreButton, deleteButton);
+        li.append(textWrap, actions);
+        completedList.appendChild(li);
+      });
+    }
+
+    function render() {
+      renderTasks();
+      renderDraw();
+      renderCompleted();
+    }
+
+    taskForm.addEventListener("submit", event => {
+      event.preventDefault();
+      addTask(taskInput.value);
+      taskInput.value = "";
+      taskInput.focus();
     });
-  }
 
-  document.getElementById("addTasksButton").addEventListener("click", () => addTasks(false));
-  document.getElementById("replaceTasksButton").addEventListener("click", () => addTasks(true));
-  drawButton.addEventListener("click", drawTwo);
-  returnButton.addEventListener("click", returnBoth);
-  document.getElementById("clearCompletedButton").addEventListener("click", () => {
-    if (!confirm("Clear the completed-task history? This won't change your available pool.")) return;
-    state.completed = [];
-    saveState();
+    drawButton.addEventListener("click", drawTwo);
+    drawAgainButton.addEventListener("click", drawTwo);
+    document.getElementById("clearCompletedButton")
+      .addEventListener("click", clearCompleted);
+
+    loadState();
     render();
-  });
-
-  loadState();
-  render();
-</script>
+  </script>
 </body>
 </html>
