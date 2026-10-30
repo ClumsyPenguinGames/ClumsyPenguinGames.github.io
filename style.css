@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Poppins:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
 /* Reset */
 * {
@@ -10,8 +10,8 @@
 /* Body */
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #C64521; /* burnt orange like your logo */
-  color: #FBEEDC; /* warm cream text */
+  background-color: #C64521;
+  color: #FBEEDC;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -45,7 +45,7 @@ h1 {
 }
 
 h1 span {
-  color: #2F2D63; /* dark indigo-purple accent */
+  color: #2F2D63;
 }
 
 /* Tagline */
@@ -96,10 +96,70 @@ h1 span {
   box-shadow: 0 8px 15px rgba(47, 45, 99, 0.5);
 }
 
+/* Beta project card */
+.beta-section {
+  width: min(100%, 620px);
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 2px solid rgba(251, 238, 220, 0.35);
+  border-radius: 20px;
+  background: rgba(47, 45, 99, 0.16);
+}
+
+.beta-label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  background: #FBEEDC;
+  color: #2F2D63;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.beta-section h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.7rem;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.beta-section p:not(.beta-label) {
+  max-width: 480px;
+  margin: 0 auto 1.2rem;
+  line-height: 1.6;
+}
+
+.beta-button {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #2F2D63;
+  color: #FBEEDC;
+  border-radius: 50px;
+  padding: 0.9rem 1.6rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(47, 45, 99, 0.4);
+  transition: all 0.3s ease;
+}
+
+.beta-button:hover {
+  background-color: #403e8c;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(47, 45, 99, 0.5);
+}
+
 /* Footer */
 footer {
   background-color: rgba(255, 255, 255, 0.08);
   padding: 1rem 0;
   font-size: 0.9rem;
   color: #FBEEDC;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 2.25rem; }
+  .container { padding: 1.5rem 1rem; }
+  .social-links { gap: 0.8rem; }
+  .beta-section { padding: 1.2rem; }
 }
