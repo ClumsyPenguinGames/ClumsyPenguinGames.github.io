@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +40,9 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: 'Poppins', sans-serif;
-  padding-bottom: 100px;
+
+  /* Leave room for the fixed navigation at every screen size. */
+  padding-bottom: calc(105px + env(safe-area-inset-bottom));
 }
 
 button, input, textarea {
@@ -184,7 +187,7 @@ input[type="text"] {
 }
 
 textarea {
-  min-height: 115px;
+  min-height: 125px;
   resize: vertical;
 }
 
@@ -449,6 +452,34 @@ textarea {
   margin: 4px 0;
 }
 
+/* Featured frog at the top of the Field Guide. */
+.featured-frog {
+  background: var(--sage-light);
+  border: 1px solid #d1dfd0;
+  border-radius: 18px;
+  padding: 17px;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.featured-frog .frog-emoji {
+  font-size: 3.4rem;
+}
+
+.featured-frog h3 {
+  color: var(--sage-dark);
+  font-size: 1.35rem;
+  margin: 4px 0;
+}
+
+.featured-label {
+  color: var(--sage-dark);
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
 .completed-row {
   display: flex;
   align-items: center;
@@ -473,6 +504,7 @@ textarea {
   flex: 0 0 auto;
 }
 
+/* Fixed navigation: remains at the bottom while the page scrolls. */
 .tabbar {
   position: fixed;
   z-index: 20;
@@ -521,22 +553,8 @@ footer {
 }
 
 @media (min-width: 650px) {
-  body {
-    padding-bottom: 25px;
-  }
-
   .app {
     padding-top: 30px;
-  }
-
-  .tabbar {
-    position: static;
-    width: min(100% - 28px, 760px);
-    margin: 0 auto 20px;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    box-shadow: var(--shadow);
-    padding: 8px;
   }
 
   .tab-button {
@@ -574,7 +592,7 @@ footer {
   <header>
     <div class="header-flower">🪷</div>
     <h1>Frog Pond</h1>
-    <p>A little progress, one frog at a time.</p>
+    <p>Complete tasks. Discover frogs. Build your field guide.</p>
   </header>
 
   <!-- YOUR POND -->
@@ -582,17 +600,13 @@ footer {
 
     <section class="panel">
       <h2>Add tasks to your pond</h2>
-      <p class="subtle">Add one task per line. You can also add a single task below.</p>
+      <p class="subtle">Enter one task per line. Add one, or as many as you'd like.</p>
 
-      <label class="field-label" for="bulkTasks">Add several tasks</label>
+      <label class="field-label" for="bulkTasks">Your tasks</label>
       <textarea id="bulkTasks" placeholder="Start a load of laundry&#10;Put away dishes&#10;Scoop the litter"></textarea>
-      <button class="primary-button full-button" id="addBulkButton">Add tasks to pond</button>
-
-      <div style="margin-top:18px">
-        <label class="field-label" for="singleTask">Add one task</label>
-        <input id="singleTask" type="text" placeholder="What needs doing?">
-        <button class="secondary-button full-button" id="addSingleButton">Add this task</button>
-      </div>
+      <button class="primary-button full-button" id="addBulkButton">
+        Add tasks to pond
+      </button>
 
       <p class="status" id="poolStatus" aria-live="polite"></p>
     </section>
@@ -602,27 +616,27 @@ footer {
         <h2>Your task pond</h2>
         <span class="count-label" id="activeTaskCount"></span>
       </div>
-      <p class="subtle">Check off anything you've already done, or edit and remove tasks.</p>
+      <p class="subtle">Check off completed tasks, or edit and remove tasks from your pool.</p>
       <div id="taskList" class="task-list"></div>
     </section>
 
   </section>
 
-  <!-- CHOOSE -->
+  <!-- CHOOSE / FIELD RESEARCH -->
   <section id="chooseScreen">
 
     <section class="panel" id="drawPanel">
       <div class="draw-intro">
-        <h2>🎲 Pick your next quest</h2>
+        <h2>🐸 Frog field research</h2>
         <p class="subtle" id="drawInstructions">
-          Let the pond choose two tasks for you.
+          Search for two tasks to pair with your next frog discoveries.
         </p>
       </div>
 
       <div id="drawCards" class="draw-cards"></div>
 
       <button class="primary-button full-button" id="drawButton">
-        Draw two tasks
+        Search for new frogs
       </button>
 
       <p class="status" id="drawStatus" aria-live="polite"></p>
@@ -646,17 +660,21 @@ footer {
     </section>
 
     <section class="panel">
-      <h2>A little pond progress</h2>
+      <h2>Research progress</h2>
       <p class="subtle" id="pondProgress"></p>
     </section>
 
   </section>
 
-  <!-- COLLECTION -->
+  <!-- FIELD GUIDE -->
   <section id="collectionScreen" hidden>
     <section class="panel">
-      <h2>🐸 Your frog collection</h2>
+      <h2>📖 Field Guide</h2>
       <p class="subtle" id="collectionSummary"></p>
+
+      <!-- The most recently adopted frog appears here. -->
+      <div id="featuredFrog"></div>
+
       <div id="frogCollection" class="frog-grid"></div>
     </section>
   </section>
@@ -668,7 +686,7 @@ footer {
         <h2>🌸 Completed tasks</h2>
         <span class="count-label" id="completedCount"></span>
       </div>
-      <p class="subtle">Look at everything you've already done. You can restore a task if it needs another round.</p>
+      <p class="subtle">Your completed-task research log. Restore a task if it needs another round.</p>
       <div id="completedList"></div>
       <button class="danger-button full-button" id="clearCompletedButton">
         Clear completed history
@@ -683,10 +701,10 @@ footer {
     <span class="tab-icon">🪷</span>Your Pond
   </button>
   <button class="tab-button active" data-screen="choose" type="button">
-    <span class="tab-icon">🎲</span>Choose
+    <span class="tab-icon">🔎</span>Research
   </button>
   <button class="tab-button" data-screen="collection" type="button">
-    <span class="tab-icon">🐸</span>Collection
+    <span class="tab-icon">📖</span>Field Guide
   </button>
   <button class="tab-button" data-screen="completed" type="button">
     <span class="tab-icon">🌸</span>Completed
@@ -809,6 +827,7 @@ function loadState() {
       : [];
 
     state.research = saved.research || saved.progress || {};
+
     state.adopted = Array.isArray(saved.adopted)
       ? saved.adopted
       : (Array.isArray(saved.adoptedFrogs) ? saved.adoptedFrogs : []);
@@ -819,10 +838,25 @@ function loadState() {
 
     state.selectedTaskId = saved.selectedTaskId || null;
 
-    // Make sure saved draw options refer to tasks that still exist.
+    // Remove draw choices that no longer point to an active task.
     state.drawOptions = state.drawOptions.filter(option =>
-      state.tasks.some(task => task.id === option.taskId)
+      option &&
+      state.tasks.some(task => task.id === option.taskId) &&
+      FROGS.some(frog => frog.name === option.frogName)
     );
+
+    // If the selected choice is no longer valid, clear the selection.
+    if (
+      state.selectedTaskId &&
+      !state.drawOptions.some(option =>
+        option.taskId === state.selectedTaskId
+      )
+    ) {
+      state.selectedTaskId = null;
+    }
+
+    // Save the cleaned state so an invalid old draw cannot keep returning.
+    saveState();
 
   } catch (error) {
     console.warn("Could not load saved app state:", error);
@@ -877,6 +911,7 @@ function addTasks(lines) {
 
 function addBulkTasks() {
   const lines = $("bulkTasks").value.split(/\r?\n/);
+
   if (!lines.some(line => line.trim())) {
     $("poolStatus").textContent = "Add at least one task first.";
     return;
@@ -885,19 +920,6 @@ function addBulkTasks() {
   addTasks(lines);
   $("bulkTasks").value = "";
   $("poolStatus").textContent = "Tasks added to your pond!";
-}
-
-function addSingleTask() {
-  const text = $("singleTask").value.trim();
-
-  if (!text) {
-    $("poolStatus").textContent = "Type a task first.";
-    return;
-  }
-
-  addTasks([text]);
-  $("singleTask").value = "";
-  $("poolStatus").textContent = "Task added to your pond!";
 }
 
 function editTask(id) {
@@ -988,8 +1010,13 @@ function awardResearch(name) {
   }
 }
 
+/*
+  Directly checking off a task now uses chooseFrog().
+  This means it follows the exact same rarity probabilities
+  as the frog paired with a task during a search.
+*/
 function awardRandomResearch() {
-  const frog = FROGS[Math.floor(Math.random() * FROGS.length)];
+  const frog = chooseFrog();
   awardResearch(frog.name);
 }
 
@@ -1017,18 +1044,22 @@ function chooseFrog() {
 }
 
 function drawTwoTasks() {
-  if (state.drawOptions.length) {
-    $("drawStatus").textContent = "Choose one of the current options first, or go back.";
-    return;
-  }
-
   if (state.tasks.length < 2) {
     $("drawStatus").textContent =
       state.tasks.length === 1
-        ? "There's only one task in your pond. Add another to draw two."
+        ? "There's only one task in your pond. Add another to search."
         : "Your pond is empty. Add some tasks first!";
+    renderDrawScreen();
     return;
   }
+
+  /*
+    IMPORTANT FIX:
+    Clear any old or incomplete draw before making a new one.
+    This prevents stale saved choices from trapping the button.
+  */
+  state.drawOptions = [];
+  state.selectedTaskId = null;
 
   const available = [...state.tasks];
 
@@ -1043,8 +1074,7 @@ function drawTwoTasks() {
     });
   }
 
-  state.selectedTaskId = null;
-  $("drawStatus").textContent = "Which little quest will you take on?";
+  $("drawStatus").textContent = "Two new research opportunities found!";
   saveState();
   renderAll();
 }
@@ -1083,12 +1113,12 @@ function completeChosenTask() {
 
   awardResearch(selectedOption.frogName);
 
-  // Return the unchosen task to the pond.
+  // The unchosen task stays in the task pool.
   state.drawOptions = [];
   state.selectedTaskId = null;
 
   $("drawStatus").textContent =
-    "Quest complete! Your frog gained some research progress. 🌸";
+    "Research recorded! Your frog gained 12.5% progress. 🌸";
 
   saveState();
   renderAll();
@@ -1149,7 +1179,7 @@ function renderTaskList() {
 
 
 /* --------------------------------
-   RENDER CHOOSE SCREEN
+   RENDER RESEARCH SCREEN
 -------------------------------- */
 
 function renderDrawScreen() {
@@ -1180,9 +1210,15 @@ function renderDrawScreen() {
 
       const progress = getResearch(frog.name);
       $("confirmProgress").textContent =
-        `${progress}% research complete. ${progress >= 87.5 ? "One more completed task will bring this frog home!" : "Every completed task adds 12.5% research."}`;
+        `${progress}% research complete. ${
+          progress >= 87.5
+            ? "One more completed task will complete this research!"
+            : "Every completed task adds 12.5% research."
+        }`;
 
-      $("drawInstructions").textContent = "Ready to take on this quest?";
+      $("drawInstructions").textContent =
+        "Review your research assignment.";
+
       return;
     }
   }
@@ -1191,27 +1227,32 @@ function renderDrawScreen() {
   cards.hidden = false;
   $("drawButton").hidden = false;
 
-  $("drawButton").disabled =
-    state.drawOptions.length > 0 || state.tasks.length < 2;
+  /*
+    The button is only disabled when there are fewer than two tasks.
+    Existing draw options no longer disable it.
+    Searching again replaces the previous pair.
+  */
+  $("drawButton").disabled = state.tasks.length < 2;
+
+  $("drawInstructions").textContent =
+    state.tasks.length >= 2
+      ? "Search for two tasks to pair with your next frog discoveries."
+      : "Add at least two tasks to your pond to begin.";
 
   if (!state.drawOptions.length) {
-    $("drawInstructions").textContent =
-      state.tasks.length >= 2
-        ? "Let the pond choose two tasks for you."
-        : "Add at least two tasks to your pond to get started.";
-
     const message = document.createElement("div");
     message.className = "empty-state";
     message.style.gridColumn = "1 / -1";
     message.textContent =
       state.tasks.length >= 2
-        ? "Your next two quests are waiting to be drawn."
-        : "🌱 Your next adventure begins with adding a couple of tasks.";
+        ? "Your next research opportunities are waiting."
+        : "🌱 Add a couple of tasks to begin your field research.";
     cards.appendChild(message);
     return;
   }
 
-  $("drawInstructions").textContent = "Choose one of these two quests.";
+  $("drawInstructions").textContent =
+    "Choose a task to record your next research progress.";
 
   state.drawOptions.forEach(option => {
     const task = state.tasks.find(task => task.id === option.taskId);
@@ -1275,15 +1316,48 @@ function renderPondProgress() {
 
 
 /* --------------------------------
-   RENDER FROG COLLECTION
+   RENDER FIELD GUIDE
 -------------------------------- */
 
 function renderCollection() {
   const container = $("frogCollection");
+  const featured = $("featuredFrog");
+
   container.replaceChildren();
+  featured.replaceChildren();
 
   $("collectionSummary").textContent =
-    `${state.adopted.length} of ${FROGS.length} frogs collected. Keep completing tasks to discover them all!`;
+    `${state.adopted.length} of ${FROGS.length} frogs collected. Complete research to identify and adopt new species.`;
+
+  /*
+    Show the most recently adopted frog at the top.
+    The last entry in the adopted array is the newest.
+  */
+  const newestName = state.adopted[state.adopted.length - 1];
+  const newestFrog = getFrog(newestName);
+
+  if (newestFrog) {
+    const featureCard = document.createElement("div");
+    featureCard.className = "featured-frog";
+
+    const label = document.createElement("div");
+    label.className = "featured-label";
+    label.textContent = "Most recently discovered";
+
+    const emoji = document.createElement("div");
+    emoji.className = "frog-emoji";
+    emoji.textContent = newestFrog.emoji;
+
+    const name = document.createElement("h3");
+    name.textContent = newestFrog.name;
+
+    const rarity = document.createElement("span");
+    rarity.className = "rarity " + newestFrog.rarity.toLowerCase();
+    rarity.textContent = newestFrog.rarity;
+
+    featureCard.append(label, emoji, name, rarity);
+    featured.appendChild(featureCard);
+  }
 
   FROGS.forEach(frog => {
     const progress = getResearch(frog.name);
@@ -1387,11 +1461,6 @@ function renderAll() {
 -------------------------------- */
 
 $("addBulkButton").addEventListener("click", addBulkTasks);
-$("addSingleButton").addEventListener("click", addSingleTask);
-
-$("singleTask").addEventListener("keydown", event => {
-  if (event.key === "Enter") addSingleTask();
-});
 
 $("drawButton").addEventListener("click", drawTwoTasks);
 $("completeChosen").addEventListener("click", completeChosenTask);
@@ -1400,7 +1469,7 @@ $("backToChoices").addEventListener("click", backToChoices);
 $("clearCompletedButton").addEventListener("click", () => {
   if (!state.completed.length) return;
 
-  if (!confirm("Clear your completed-task history? This will not affect your active tasks or frog collection.")) {
+  if (!confirm("Clear your completed-task history? This will not affect your active tasks or frog research.")) {
     return;
   }
 
