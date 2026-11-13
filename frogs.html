@@ -1,797 +1,1449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Draw Beta | Clumsy Penguin Games</title>
-
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F8EAF1">
+<title>Frog Pond | Clumsy Penguin Games</title>
 
 <style>
-  :root {
-    --sage-dark: #405C4A;
-    --sage: #789780;
-    --sage-light: #E2EBDD;
-    --sage-pale: #F0F3EB;
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
-    --lotus: #D985A0;
-    --lotus-dark: #963F60;
-    --lotus-light: #F5DCE5;
-    --lotus-pale: #FCF0F4;
+:root {
+  --pink: #D985A5;
+  --pink-dark: #913F61;
+  --pink-pale: #F9E7EF;
+  --lavender: #DDD4F1;
+  --lavender-dark: #65518D;
+  --sage: #9BB99A;
+  --sage-dark: #42634B;
+  --sage-pale: #EAF2E7;
+  --yellow: #F4D98B;
+  --yellow-pale: #FFF5D9;
+  --cream: #FFF9F0;
+  --paper: #FFFFFF;
+  --ink: #343A35;
+  --muted: #667066;
+  --line: #E9E1E4;
+  --danger: #A13F3F;
+  --shadow: 0 5px 18px rgba(85, 65, 77, .09);
+}
 
-    --cream: #FFF8E9;
-    --cream-dark: #E9DDC7;
+* { box-sizing: border-box; }
 
-    --ink: #30382F;
-    --muted: #596457;
-    --white: #FFFFFF;
+[hidden] { display: none !important; }
+
+html { min-height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 5%, rgba(221,212,241,.45), transparent 25rem),
+    radial-gradient(circle at 95% 15%, rgba(249,231,239,.8), transparent 22rem),
+    var(--cream);
+  color: var(--ink);
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  padding-bottom: calc(82px + env(safe-area-inset-bottom));
+}
+
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--lavender-dark);
+  outline-offset: 3px;
+}
+
+.app {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 18px 15px 35px;
+}
+
+.topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.back-link {
+  color: var(--sage-dark);
+  font-size: .85rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.beta-label {
+  background: var(--lavender);
+  color: var(--lavender-dark);
+  border-radius: 30px;
+  padding: 5px 10px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+header .frog-mark {
+  font-size: 2.7rem;
+  line-height: 1.2;
+}
+
+h1, h2, h3 {
+  font-family: 'Baloo 2', cursive;
+  line-height: 1.15;
+}
+
+h1 {
+  color: var(--sage-dark);
+  font-size: 2.25rem;
+  margin: 3px 0 0;
+}
+
+header p {
+  color: var(--muted);
+  margin: 2px 0 0;
+  font-size: .9rem;
+}
+
+.panel {
+  background: rgba(255,255,255,.94);
+  border: 1px solid #F0E5E9;
+  border-radius: 21px;
+  padding: 19px;
+  margin-bottom: 15px;
+  box-shadow: var(--shadow);
+}
+
+.panel h2 {
+  color: var(--sage-dark);
+  font-size: 1.45rem;
+  margin: 0 0 10px;
+}
+
+.panel h3 {
+  font-size: 1.1rem;
+  margin: 0 0 6px;
+}
+
+.subtle {
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.5;
+}
+
+.count-line {
+  color: var(--muted);
+  font-size: .8rem;
+  margin: 8px 0 12px;
+}
+
+.primary-button, .secondary-button, .quiet-button, .danger-button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 16px;
+  font-weight: 700;
+  transition: transform .12s ease, filter .12s ease;
+}
+
+.primary-button {
+  color: white;
+  background: var(--sage-dark);
+  box-shadow: 0 3px 0 #304A37;
+}
+
+.primary-button:hover, .secondary-button:hover,
+.quiet-button:hover, .danger-button:hover {
+  filter: brightness(.97);
+  transform: translateY(-1px);
+}
+
+.primary-button:active, .secondary-button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.primary-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondary-button {
+  color: #71344F;
+  background: var(--pink-pale);
+  box-shadow: 0 3px 0 #E8C4D2;
+}
+
+.quiet-button {
+  color: var(--sage-dark);
+  background: var(--sage-pale);
+}
+
+.danger-button {
+  color: var(--danger);
+  background: #FCE9E5;
+}
+
+.full-button { width: 100%; }
+
+.small-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 11px;
+  min-height: 38px;
+  color: var(--sage-dark);
+  background: var(--sage-pale);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.small-button.danger {
+  color: var(--danger);
+  background: #FCE9E5;
+}
+
+.task-entry {
+  display: flex;
+  gap: 8px;
+}
+
+.task-entry input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  border: 2px solid #D8E4D5;
+  border-radius: 13px;
+  padding: 11px 13px;
+  background: #FFFEFC;
+  color: var(--ink);
+}
+
+.task-entry input::placeholder, textarea::placeholder {
+  color: #788178;
+  opacity: 1;
+}
+
+.paste-toggle {
+  margin-top: 11px;
+  color: var(--lavender-dark);
+  background: transparent;
+  border: 0;
+  padding: 5px 0;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.paste-box {
+  margin-top: 12px;
+  padding: 13px;
+  border-radius: 15px;
+  background: #F5F1FA;
+}
+
+.paste-box textarea {
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  border: 1px solid #CFC2E2;
+  border-radius: 11px;
+  padding: 11px;
+  background: white;
+  color: var(--ink);
+}
+
+.paste-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.paste-actions button { flex: 1; }
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.task-row:last-child { border-bottom: 0; }
+
+.task-check {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+  accent-color: var(--sage-dark);
+}
+
+.task-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+
+.task-tools {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px 10px;
+  color: var(--muted);
+}
+
+.empty-state .empty-frog {
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+}
+
+.draw-intro {
+  text-align: center;
+  margin-bottom: 13px;
+}
+
+.draw-intro p { margin: 0; }
+
+.draw-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin: 15px 0;
+}
+
+.draw-card {
+  min-width: 0;
+  padding: 15px 11px;
+  border-radius: 18px;
+  border: 2px solid #E9D7E3;
+  background: linear-gradient(160deg, #FFF6FA, #F7F1FB);
+  text-align: center;
+}
+
+.draw-card .frog-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+.draw-card .frog-name {
+  color: var(--lavender-dark);
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  margin-bottom: 7px;
+}
+
+.draw-card .task-prompt {
+  color: var(--ink);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  margin: 9px 0 12px;
+  line-height: 1.4;
+}
+
+.rarity {
+  display: inline-block;
+  border-radius: 30px;
+  padding: 4px 9px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.rarity.common { background: #E7F0E5; color: #3E6844; }
+.rarity.uncommon { background: #E7F0F7; color: #315F83; }
+.rarity.rare { background: #F0E9FA; color: #684B91; }
+.rarity.epic { background: #FCE8EF; color: #9A3E62; }
+.rarity.legendary { background: #FFF0C9; color: #805B13; }
+
+.research-line {
+  margin: 8px 0 4px;
+  font-size: .73rem;
+  color: var(--muted);
+}
+
+.progress-track {
+  height: 8px;
+  background: #EAE7E5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), #6D9B74);
+  border-radius: 20px;
+  transition: width .2s ease;
+}
+
+.draw-card .primary-button {
+  width: 100%;
+  padding: 10px 7px;
+  font-size: .82rem;
+  min-height: 43px;
+}
+
+.draw-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.draw-actions button { flex: 1; }
+
+.confirm-card {
+  text-align: center;
+  background: var(--yellow-pale);
+  border: 2px solid #F0DFAF;
+  border-radius: 19px;
+  padding: 20px 15px;
+  margin: 15px 0;
+}
+
+.confirm-card .frog-emoji { font-size: 3rem; }
+
+.confirm-card h3 {
+  color: var(--sage-dark);
+  font-size: 1.35rem;
+  margin: 6px 0;
+}
+
+.confirm-task {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.frog-tile {
+  border: 1px solid #E8E0E8;
+  border-radius: 15px;
+  padding: 12px 10px;
+  background: #FFFCFD;
+  min-width: 0;
+}
+
+.frog-tile.adopted {
+  background: #F1F7EC;
+  border-color: #C7DCC1;
+}
+
+.frog-tile .frog-emoji {
+  font-size: 1.9rem;
+  text-align: center;
+}
+
+.frog-tile .frog-name {
+  text-align: center;
+  font-family: 'Baloo 2', cursive;
+  font-size: .96rem;
+  line-height: 1.15;
+  margin: 3px 0 6px;
+  overflow-wrap: anywhere;
+}
+
+.frog-tile .tile-status {
+  text-align: center;
+  font-size: .72rem;
+  color: var(--muted);
+  margin: 6px 0;
+}
+
+.collection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 17px 0 10px;
+}
+
+.collection-heading h3 { margin: 0; }
+
+.completed-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.completed-row:last-child { border-bottom: 0; }
+
+.completed-row .completed-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.completed-meta {
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.completed-tools {
+  display: flex;
+  gap: 5px;
+}
+
+.notice {
+  background: var(--yellow-pale);
+  border: 1px solid #EEDB9F;
+  border-radius: 15px;
+  padding: 13px;
+  margin-bottom: 14px;
+  text-align: center;
+  line-height: 1.45;
+}
+
+.notice strong { color: #765414; }
+
+.tabbar {
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255,249,240,.96);
+  border-top: 1px solid #E8DEE1;
+  backdrop-filter: blur(12px);
+}
+
+.tab-button {
+  border: 0;
+  border-radius: 13px;
+  min-height: 54px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .74rem;
+  font-weight: 700;
+}
+
+.tab-button .tab-icon {
+  display: block;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.tab-button.active {
+  color: var(--sage-dark);
+  background: var(--sage-pale);
+}
+
+.footer-note {
+  text-align: center;
+  color: var(--muted);
+  font-size: .75rem;
+  margin: 18px 0 0;
+}
+
+@media (max-width: 520px) {
+  .app { padding: 13px 12px 25px; }
+  header { margin-bottom: 16px; }
+  h1 { font-size: 2rem; }
+  .panel { padding: 16px 14px; border-radius: 18px; }
+  .draw-cards { grid-template-columns: 1fr; }
+  .draw-card { padding: 16px; }
+  .task-entry { flex-direction: column; }
+  .task-entry .primary-button { width: 100%; }
+  .task-tools { gap: 4px; }
+  .small-button { padding: 8px; }
+  .collection-grid { gap: 8px; }
+}
+
+@media (min-width: 600px) {
+  body { padding-bottom: 25px; }
+  .tabbar {
+    position: static;
+    width: min(100% - 30px, 730px);
+    margin: 0 auto 20px;
+    border: 1px solid #E8DEE1;
+    border-radius: 17px;
+    box-shadow: var(--shadow);
   }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    background: var(--cream);
-    color: var(--ink);
-  }
-
-  .app-container {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 24px 20px 50px;
-    color: var(--ink);
-  }
-
-  .app-header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-
-  .beta-badge {
-    display: inline-block;
-    background: var(--sage-dark);
-    color: var(--white);
-    padding: 6px 13px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
-
-  .app-header h1 {
-    color: var(--sage-dark);
-    margin-bottom: 8px;
-  }
-
-  .app-header p {
-    color: var(--muted);
-  }
-
-  .back-link {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: var(--sage-dark);
-    font-weight: bold;
-  }
-
-  .back-link:hover {
-    color: var(--lotus-dark);
-  }
-
-  .panel {
-    background: var(--white);
-    color: var(--ink);
-    border: 2px solid var(--sage-light);
-    border-radius: 18px;
-    padding: 22px;
-    margin-bottom: 22px;
-    box-shadow: 0 4px 12px rgba(64, 92, 74, 0.08);
-  }
-
-  .panel h2 {
-    color: var(--sage-dark);
-    margin-top: 0;
-  }
-
-  .task-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .task-form input,
-  .edit-input {
-    min-width: 0;
-    flex: 1;
-    padding: 12px;
-    border: 2px solid #A7B9A7;
-    border-radius: 10px;
-    background: var(--white);
-    color: var(--ink);
-    font: inherit;
-  }
-
-  .task-form input::placeholder {
-    color: #657064;
-    opacity: 1;
-  }
-
-  .task-form input:focus,
-  .edit-input:focus {
-    outline: 3px solid var(--lotus-light);
-    border-color: var(--lotus-dark);
-  }
-
-  button {
-    cursor: pointer;
-    font: inherit;
-  }
-
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible {
-    outline: 3px solid var(--lotus-dark);
-    outline-offset: 3px;
-  }
-
-  .action-button {
-    border: none;
-    border-radius: 10px;
-    padding: 11px 16px;
-    background: var(--sage-dark);
-    color: var(--white);
-    font-weight: bold;
-    transition: background 0.15s ease, transform 0.15s ease;
-  }
-
-  .action-button:hover {
-    background: #304A39;
-    transform: translateY(-1px);
-  }
-
-  .action-button:disabled {
-    background: #A9B5A8;
-    color: #30382F;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .secondary-button {
-    background: var(--lotus-light);
-    color: #71304A;
-  }
-
-  .secondary-button:hover {
-    background: #EFC9D8;
-  }
-
-  .danger-button {
-    background: #F8E2DC;
-    color: #852E24;
-  }
-
-  .danger-button:hover {
-    background: #F2CFC5;
-  }
-
-  .task-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .task-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 0;
-    border-bottom: 1px solid #E5E9DF;
-  }
-
-  .task-item:last-child {
-    border-bottom: none;
-  }
-
-  .task-checkbox {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    accent-color: var(--sage-dark);
-    cursor: pointer;
-  }
-
-  .task-text {
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    color: var(--ink);
-  }
-
-  .task-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .small-button {
-    border: none;
-    border-radius: 8px;
-    padding: 7px 9px;
-    background: var(--sage-light);
-    color: #304A39;
-  }
-
-  .small-button:hover {
-    background: #D1E0CF;
-  }
-
-  .empty-message {
-    color: var(--muted);
-    font-style: italic;
-    padding: 8px 0;
-  }
-
-  .task-count {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: -10px;
-    margin-bottom: 14px;
-  }
-
-  .draw-area {
-    text-align: center;
-  }
-
-  .draw-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    margin: 18px 0;
-  }
-
-  .draw-card {
-    border: 2px solid #E8C6D3;
-    border-radius: 14px;
-    background: var(--lotus-pale);
-    padding: 18px 12px;
-    overflow-wrap: anywhere;
-  }
-
-  .draw-card p {
-    margin-bottom: 14px;
-    font-weight: bold;
-    color: #71304A;
-  }
-
-  .completed-text {
-    text-decoration: line-through;
-    color: var(--muted);
-  }
-
-  .completed-date {
-    display: block;
-    color: var(--muted);
-    font-size: 0.8rem;
-    margin-top: 4px;
-  }
-
-  .section-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-heading h2 {
-    margin-bottom: 12px;
-  }
-
-  #completedList .task-item {
-    background: var(--sage-pale);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    padding: 12px;
-    border-bottom: none;
-  }
-
-  #completedList .task-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .footer-note {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 28px;
-  }
-
-  @media (max-width: 540px) {
-    .task-form {
-      flex-direction: column;
-    }
-
-    .task-item {
-      flex-wrap: wrap;
-    }
-
-    .task-actions {
-      margin-left: 30px;
-    }
-
-    .draw-cards {
-      grid-template-columns: 1fr;
-    }
-
-    .panel {
-      padding: 16px;
-    }
-
-    .section-heading {
-      align-items: flex-start;
-    }
-  }
+  .app { padding-top: 24px; }
+}
 </style>
 </head>
 
 <body>
-  <main class="app-container">
+<main class="app">
 
+  <div class="topline">
     <a class="back-link" href="index.html">← Clumsy Penguin Games</a>
+    <span class="beta-label">BETA PROJECT</span>
+  </div>
 
-    <header class="app-header">
-      <span class="beta-badge">BETA PROJECT</span>
-      <h1>🐸 Task Draw</h1>
-      <p>Rescue a frog, one task at a time.</p>
-    </header>
+  <header>
+    <div class="frog-mark">🐸 🌷</div>
+    <h1>Frog Pond</h1>
+    <p>A little progress, one frog at a time.</p>
+  </header>
+
+  <div id="rewardNotice" class="notice" hidden aria-live="polite"></div>
+
+  <!-- POND SCREEN -->
+  <section id="pondScreen">
 
     <section class="panel">
-      <h2>Add a task to your pond</h2>
-
-      <form class="task-form" id="taskForm">
-        <input
-          id="taskInput"
-          type="text"
-          placeholder="What needs doing?"
-          autocomplete="off"
-          required
-        >
-        <button class="action-button" type="submit">Add Task</button>
+      <h2>🌼 Add to your pond</h2>
+      <form id="taskForm" class="task-entry">
+        <input id="taskInput" type="text" placeholder="What's one thing to do?" autocomplete="off" maxlength="180">
+        <button class="primary-button" type="submit">Add task</button>
       </form>
 
-      <p class="task-count" id="poolCount"></p>
+      <button class="paste-toggle" id="pasteToggle" type="button">
+        ＋ Paste a whole to-do list
+      </button>
 
-      <div class="section-heading">
-        <h2>Your Current Task Pool</h2>
-        <button
-          class="small-button"
-          type="button"
-          id="drawButton"
-        >
-          Draw Two
-        </button>
+      <div class="paste-box" id="pasteBox" hidden>
+        <p class="subtle">Paste your list below. Each line will become a separate task.</p>
+        <textarea id="bulkInput" placeholder="Wash dishes&#10;Put laundry away&#10;Water the plants"></textarea>
+        <div class="paste-actions">
+          <button class="quiet-button" id="cancelPaste" type="button">Cancel</button>
+          <button class="primary-button" id="importTasks" type="button">Add all tasks</button>
+        </div>
       </div>
+    </section>
 
-      <p class="task-count">
-        Check off anything you've already finished, or edit a task right here.
-      </p>
-
+    <section class="panel">
+      <h2>🪷 Your task pond</h2>
+      <div class="count-line" id="poolCount"></div>
       <ul class="task-list" id="taskList"></ul>
-      <p class="empty-message" id="emptyPoolMessage" hidden>
-        Your pond is empty! Add a task to get started.
-      </p>
+      <div class="empty-state" id="emptyPool" hidden>
+        <div class="empty-frog">🐸</div>
+        <strong>Your pond is peaceful!</strong>
+        <p class="subtle">Add a task whenever you're ready.</p>
+      </div>
     </section>
 
     <section class="panel" id="drawPanel">
-      <h2>Choose Your Next Task</h2>
+      <div class="draw-intro">
+        <h2>🎲 Pick your next quest</h2>
+        <p class="subtle" id="drawInstructions">Let the pond choose two tasks for you.</p>
+      </div>
 
-      <div class="draw-area">
-        <p id="drawInstructions">
-          Draw two tasks when you want help deciding what to do next.
-        </p>
+      <div id="drawCards" class="draw-cards"></div>
 
-        <div class="draw-cards" id="drawCards"></div>
+      <button class="primary-button full-button" id="drawButton" type="button">
+        Draw two tasks
+      </button>
 
-        <button
-          class="action-button"
-          type="button"
-          id="drawAgainButton"
-          hidden
-        >
-          Draw Two Again
+      <div id="confirmArea" hidden>
+        <div class="confirm-card">
+          <div class="frog-emoji" id="confirmEmoji">🐸</div>
+          <h3 id="confirmFrogName">Your frog</h3>
+          <span id="confirmRarity" class="rarity common">Common</span>
+          <p class="confirm-task" id="confirmTask"></p>
+          <p class="subtle" id="confirmProgress"></p>
+        </div>
+        <button class="primary-button full-button" id="completeChosen" type="button">
+          Complete this task
+        </button>
+        <button class="quiet-button full-button" id="backToChoices" type="button" style="margin-top:9px">
+          ← Back to the two choices
         </button>
       </div>
     </section>
+  </section>
 
+  <!-- COLLECTION SCREEN -->
+  <section id="collectionScreen" hidden>
     <section class="panel">
-      <div class="section-heading">
-        <h2>Completed Tasks</h2>
-        <button
-          class="small-button secondary-button"
-          type="button"
-          id="clearCompletedButton"
-        >
-          Clear History
-        </button>
+      <h2>🐸 Your frog collection</h2>
+      <p class="subtle">Every frog begins as a discovery. Complete tasks to research and adopt them!</p>
+      <div class="count-line" id="collectionCount"></div>
+      <div class="collection-heading">
+        <h3>Adopted frogs</h3>
       </div>
-
-      <p class="task-count" id="completedCount"></p>
-
-      <ul class="task-list" id="completedList"></ul>
-
-      <p class="empty-message" id="emptyCompletedMessage">
-        No rescued frogs yet. Every little task counts!
-      </p>
+      <div id="adoptedGrid" class="collection-grid"></div>
+      <div class="collection-heading">
+        <h3>Still researching</h3>
+      </div>
+      <div id="researchGrid" class="collection-grid"></div>
     </section>
+  </section>
 
-    <p class="footer-note">
-      Your pond is saved in this browser. 🪷
-    </p>
+  <!-- COMPLETED SCREEN -->
+  <section id="completedScreen" hidden>
+    <section class="panel">
+      <h2>🌸 Completed tasks</h2>
+      <p class="subtle">Look at everything you've done. Little things count, too.</p>
+      <div class="count-line" id="completedCount"></div>
+      <div id="completedList"></div>
+      <div class="empty-state" id="emptyCompleted" hidden>
+        <div class="empty-frog">🌱</div>
+        <strong>Your accomplishments will grow here.</strong>
+      </div>
+      <button class="danger-button full-button" id="clearCompleted" type="button" style="margin-top:15px">
+        Clear completed-task history
+      </button>
+    </section>
+  </section>
 
-  </main>
+  <p class="footer-note">Your pond is saved automatically in this browser. 🪷</p>
+</main>
 
-  <script>
-    const STORAGE_KEY = "taskDrawBetaState";
+<nav class="tabbar" aria-label="Main navigation">
+  <button class="tab-button active" data-screen="pond" type="button">
+    <span class="tab-icon">🪷</span>Your Pond
+  </button>
+  <button class="tab-button" data-screen="collection" type="button">
+    <span class="tab-icon">🐸</span>Collection
+  </button>
+  <button class="tab-button" data-screen="completed" type="button">
+    <span class="tab-icon">🌸</span>Completed
+  </button>
+</nav>
 
-    let tasks = [];
-    let completedTasks = [];
-    let drawIds = [];
+<script>
+/* -------------------------------------------------------
+   FROG SPECIES
+   Rarity determines the chance of a category appearing.
+   A species is then selected evenly from that category.
+------------------------------------------------------- */
 
-    const taskForm = document.getElementById("taskForm");
-    const taskInput = document.getElementById("taskInput");
-    const taskList = document.getElementById("taskList");
-    const completedList = document.getElementById("completedList");
-    const drawCards = document.getElementById("drawCards");
-    const drawInstructions = document.getElementById("drawInstructions");
-    const drawButton = document.getElementById("drawButton");
-    const drawAgainButton = document.getElementById("drawAgainButton");
+const FROGS = [
+  { id: "american-bullfrog", name: "American Bullfrog", rarity: "Common", emoji: "🐸" },
+  { id: "red-eyed-tree-frog", name: "Red-Eyed Tree Frog", rarity: "Common", emoji: "🐸" },
+  { id: "whites-tree-frog", name: "White's Tree Frog", rarity: "Common", emoji: "🐸" },
+  { id: "green-tree-frog", name: "Green Tree Frog", rarity: "Common", emoji: "🐸" },
+  { id: "pacman-frog", name: "Pacman Frog", rarity: "Common", emoji: "🐸" },
+  { id: "african-clawed-frog", name: "African Clawed Frog", rarity: "Common", emoji: "🐸" },
+  { id: "fire-bellied-toad", name: "Fire-Bellied Toad", rarity: "Common", emoji: "🐸" },
+  { id: "tomato-frog", name: "Tomato Frog", rarity: "Common", emoji: "🐸" },
 
-    function createId() {
-      return Date.now().toString(36) +
-        Math.random().toString(36).slice(2, 9);
-    }
+  { id: "desert-rain-frog", name: "Desert Rain Frog", rarity: "Uncommon", emoji: "🐸" },
+  { id: "common-coqui", name: "Common Coquí", rarity: "Uncommon", emoji: "🐸" },
+  { id: "amazon-milk-frog", name: "Amazon Milk Frog", rarity: "Uncommon", emoji: "🐸" },
+  { id: "vietnamese-mossy-frog", name: "Vietnamese Mossy Frog", rarity: "Uncommon", emoji: "🐸" },
+  { id: "cuban-tree-frog", name: "Cuban Tree Frog", rarity: "Uncommon", emoji: "🐸" },
 
-    function loadState() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  { id: "goliath-frog", name: "Goliath Frog", rarity: "Rare", emoji: "🐸" },
+  { id: "golden-mantella", name: "Golden Mantella", rarity: "Rare", emoji: "🐸" },
+  { id: "surinam-toad", name: "Surinam Toad", rarity: "Rare", emoji: "🐸" },
+  { id: "strawberry-poison-frog", name: "Strawberry Poison Frog", rarity: "Rare", emoji: "🐸" },
 
-        if (!saved) return;
+  { id: "panamanian-golden-frog", name: "Panamanian Golden Frog", rarity: "Epic", emoji: "🐸" },
+  { id: "budgetts-frog", name: "Budgett's Frog", rarity: "Epic", emoji: "🐸" },
 
-        if (Array.isArray(saved.tasks)) {
-          tasks = saved.tasks.map(task => {
-            if (typeof task === "string") {
-              return { id: createId(), text: task };
-            }
+  { id: "lehmanns-poison-frog", name: "Lehmann's Poison Frog", rarity: "Legendary", emoji: "🐸" }
+];
 
-            return {
-              id: task.id || createId(),
-              text: task.text || task.name || ""
-            };
-          }).filter(task => task.text.trim());
+const ENCOUNTER_CHANCES = {
+  Common: 45,
+  Uncommon: 25,
+  Rare: 17,
+  Epic: 9,
+  Legendary: 4
+};
+
+const STORAGE_KEY = "taskDrawBetaState";
+const RESEARCH_PER_TASK = 12.5;
+
+let tasks = [];
+let completedTasks = [];
+let research = {};
+let drawOptions = [];
+let selectedTaskId = null;
+let currentScreen = "pond";
+
+const $ = id => document.getElementById(id);
+
+function makeId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+}
+
+function getFrog(id) {
+  return FROGS.find(frog => frog.id === id);
+}
+
+function getProgress(frogId) {
+  return Math.min(100, Number(research[frogId] || 0));
+}
+
+function getAdoptedFrogs() {
+  return FROGS.filter(frog => getProgress(frog.id) >= 100);
+}
+
+function getRarityClass(rarity) {
+  return rarity.toLowerCase();
+}
+
+/* -------------------------------------------------------
+   SAVE AND LOAD
+   The original taskDrawBetaState key is retained so your
+   existing task pool and completed tasks can carry over.
+------------------------------------------------------- */
+
+function saveState() {
+  const state = {
+    tasks,
+    completedTasks,
+    research,
+    drawOptions,
+    selectedTaskId
+  };
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.error("Could not save your pond:", error);
+  }
+}
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved) return;
+
+    if (Array.isArray(saved.tasks)) {
+      tasks = saved.tasks.map(task => {
+        if (typeof task === "string") {
+          return { id: makeId(), text: task };
         }
+        return {
+          id: task.id || makeId(),
+          text: task.text || task.name || ""
+        };
+      }).filter(task => task.text.trim());
+    }
 
-        if (Array.isArray(saved.completedTasks)) {
-          completedTasks = saved.completedTasks.map(task => {
-            if (typeof task === "string") {
-              return {
-                id: createId(),
-                text: task,
-                completedAt: null
-              };
-            }
-
-            return {
-              id: task.id || createId(),
-              text: task.text || task.name || "",
-              completedAt: task.completedAt || null
-            };
-          }).filter(task => task.text.trim());
+    if (Array.isArray(saved.completedTasks)) {
+      completedTasks = saved.completedTasks.map(task => {
+        if (typeof task === "string") {
+          return { id: makeId(), text: task, completedAt: null };
         }
-
-        // Support older versions that stored completed tasks under another name.
-        if (
-          completedTasks.length === 0 &&
-          Array.isArray(saved.completed)
-        ) {
-          completedTasks = saved.completed.map(task => ({
-            id: createId(),
-            text: typeof task === "string" ? task : task.text || task.name || "",
-            completedAt: null
-          })).filter(task => task.text.trim());
-        }
-
-      } catch (error) {
-        console.error("Could not load saved tasks:", error);
-      }
+        return {
+          id: task.id || makeId(),
+          text: task.text || task.name || "",
+          completedAt: task.completedAt || null,
+          frogId: task.frogId || null
+        };
+      }).filter(task => task.text.trim());
     }
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tasks,
-        completedTasks
-      }));
+    if (
+      completedTasks.length === 0 &&
+      Array.isArray(saved.completed)
+    ) {
+      completedTasks = saved.completed.map(task => ({
+        id: makeId(),
+        text: typeof task === "string" ? task : task.text || task.name || "",
+        completedAt: null
+      })).filter(task => task.text.trim());
     }
 
-    function completeTask(id) {
-      const index = tasks.findIndex(task => task.id === id);
-      if (index === -1) return;
-
-      const [task] = tasks.splice(index, 1);
-
-      completedTasks.unshift({
-        ...task,
-        completedAt: new Date().toISOString()
+    if (saved.research && typeof saved.research === "object") {
+      research = {};
+      FROGS.forEach(frog => {
+        research[frog.id] = Math.min(100, Math.max(0, Number(saved.research[frog.id]) || 0));
       });
-
-      drawIds = drawIds.filter(drawId => drawId !== id);
-
-      saveState();
-      render();
+    } else {
+      FROGS.forEach(frog => research[frog.id] = 0);
     }
 
-    function addTask(text) {
-      const cleaned = text.trim();
-      if (!cleaned) return;
-
-      tasks.push({
-        id: createId(),
-        text: cleaned
-      });
-
-      saveState();
-      render();
+    if (Array.isArray(saved.drawOptions)) {
+      drawOptions = saved.drawOptions.filter(option =>
+        option &&
+        tasks.some(task => task.id === option.taskId) &&
+        getFrog(option.frogId)
+      );
     }
 
-    function editTask(id) {
-      const task = tasks.find(item => item.id === id);
-      if (!task) return;
-
-      const newText = prompt("Edit task:", task.text);
-      if (newText === null) return;
-
-      const cleaned = newText.trim();
-      if (!cleaned) {
-        alert("A task can't be blank. Delete it if you no longer need it.");
-        return;
-      }
-
-      task.text = cleaned;
-      saveState();
-      render();
+    if (saved.selectedTaskId) {
+      selectedTaskId = saved.selectedTaskId;
     }
+  } catch (error) {
+    console.error("Could not load your saved pond:", error);
+    FROGS.forEach(frog => research[frog.id] = research[frog.id] || 0);
+  }
 
-    function deleteTask(id) {
-      const task = tasks.find(item => item.id === id);
-      if (!task) return;
+  FROGS.forEach(frog => {
+    if (research[frog.id] === undefined) research[frog.id] = 0;
+  });
 
-      if (!confirm(`Remove "${task.text}" from your task pool?`)) return;
+  if (selectedTaskId && !drawOptions.some(option => option.taskId === selectedTaskId)) {
+    selectedTaskId = null;
+  }
+}
 
-      tasks = tasks.filter(item => item.id !== id);
-      drawIds = drawIds.filter(drawId => drawId !== id);
+/* -------------------------------------------------------
+   TASK MANAGEMENT
+------------------------------------------------------- */
 
-      saveState();
-      render();
+function addTask(text) {
+  const cleaned = text.trim();
+  if (!cleaned) return false;
+
+  tasks.push({ id: makeId(), text: cleaned });
+  saveState();
+  renderAll();
+  return true;
+}
+
+function importTasks() {
+  const lines = $("bulkInput").value
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  if (!lines.length) {
+    $("bulkInput").focus();
+    return;
+  }
+
+  lines.forEach(text => {
+    tasks.push({ id: makeId(), text });
+  });
+
+  $("bulkInput").value = "";
+  $("pasteBox").hidden = true;
+  $("pasteToggle").textContent = "＋ Paste a whole to-do list";
+
+  saveState();
+  renderAll();
+  showNotice(`${lines.length} task${lines.length === 1 ? "" : "s"} added to your pond! 🌷`);
+}
+
+function editTask(id) {
+  const task = tasks.find(item => item.id === id);
+  if (!task) return;
+
+  const updated = prompt("Edit your task:", task.text);
+  if (updated === null) return;
+
+  if (!updated.trim()) {
+    alert("A task can't be blank.");
+    return;
+  }
+
+  task.text = updated.trim();
+  saveState();
+  renderAll();
+}
+
+function removeTask(id) {
+  const task = tasks.find(item => item.id === id);
+  if (!task) return;
+
+  if (!confirm(`Remove "${task.text}" from your pond?`)) return;
+
+  tasks = tasks.filter(item => item.id !== id);
+  drawOptions = drawOptions.filter(option => option.taskId !== id);
+
+  if (selectedTaskId === id) selectedTaskId = null;
+
+  saveState();
+  renderAll();
+}
+
+function completeManually(id) {
+  const frog = chooseRandomFrog();
+  completeTask(id, frog.id);
+}
+
+function completeTask(id, frogId) {
+  const index = tasks.findIndex(task => task.id === id);
+  if (index === -1) return;
+
+  const frog = getFrog(frogId);
+  if (!frog) return;
+
+  const [task] = tasks.splice(index, 1);
+
+  const oldProgress = getProgress(frog.id);
+  research[frog.id] = Math.min(100, oldProgress + RESEARCH_PER_TASK);
+
+  completedTasks.unshift({
+    ...task,
+    completedAt: new Date().toISOString(),
+    frogId: frog.id
+  });
+
+  drawOptions = drawOptions.filter(option => option.taskId !== id);
+  selectedTaskId = null;
+
+  saveState();
+  renderAll();
+
+  const newProgress = getProgress(frog.id);
+  const adopted = oldProgress < 100 && newProgress >= 100;
+
+  let message = `<strong>Task complete!</strong><br>${escapeHTML(frog.name)} gained ${RESEARCH_PER_TASK}% research.`;
+  if (adopted) {
+    message = `<strong>You've adopted a ${escapeHTML(frog.name)}!</strong><br>Research complete! Your new frog has joined your collection. 🐸`;
+  } else {
+    message += `<br>${newProgress}% researched.`;
+  }
+
+  showNotice(message);
+}
+
+function restoreTask(id) {
+  const index = completedTasks.findIndex(task => task.id === id);
+  if (index === -1) return;
+
+  const [task] = completedTasks.splice(index, 1);
+  tasks.push({ id: task.id, text: task.text });
+
+  saveState();
+  renderAll();
+}
+
+function deleteCompletedTask(id) {
+  completedTasks = completedTasks.filter(task => task.id !== id);
+  saveState();
+  renderAll();
+}
+
+function clearCompleted() {
+  if (!completedTasks.length) return;
+
+  if (!confirm("Clear your completed-task history? Your remaining tasks, frog research, and adopted frogs will stay saved.")) {
+    return;
+  }
+
+  completedTasks = [];
+  saveState();
+  renderAll();
+}
+
+/* -------------------------------------------------------
+   RANDOM FROG SELECTION
+   First choose a rarity category using the percentages.
+   Then choose one species evenly within that category.
+------------------------------------------------------- */
+
+function chooseRandomFrog() {
+  const roll = Math.random() * 100;
+  let total = 0;
+  let chosenRarity = "Common";
+
+  for (const [rarity, chance] of Object.entries(ENCOUNTER_CHANCES)) {
+    total += chance;
+    if (roll < total) {
+      chosenRarity = rarity;
+      break;
     }
+  }
 
-    function restoreTask(id) {
-      const index = completedTasks.findIndex(task => task.id === id);
-      if (index === -1) return;
+  const candidates = FROGS.filter(frog => frog.rarity === chosenRarity);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
 
-      const [task] = completedTasks.splice(index, 1);
+function drawTwo() {
+  if (!tasks.length) return;
 
-      tasks.push({
-        id: task.id,
-        text: task.text
-      });
+  const shuffled = [...tasks].sort(() => Math.random() - 0.5);
+  const chosenTasks = shuffled.slice(0, Math.min(2, shuffled.length));
 
+  drawOptions = chosenTasks.map(task => ({
+    taskId: task.id,
+    frogId: chooseRandomFrog().id
+  }));
+
+  selectedTaskId = null;
+  saveState();
+  renderDraw();
+}
+
+function selectDrawOption(taskId) {
+  selectedTaskId = taskId;
+  saveState();
+  renderDraw();
+}
+
+function returnToChoices() {
+  selectedTaskId = null;
+  saveState();
+  renderDraw();
+}
+
+/* -------------------------------------------------------
+   RENDERING
+------------------------------------------------------- */
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[character]);
+}
+
+function renderTasks() {
+  const list = $("taskList");
+  list.innerHTML = "";
+
+  $("poolCount").textContent =
+    `${tasks.length} task${tasks.length === 1 ? "" : "s"} waiting in your pond`;
+
+  $("emptyPool").hidden = tasks.length > 0;
+
+  tasks.forEach(task => {
+    const row = document.createElement("li");
+    row.className = "task-row";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "task-check";
+    checkbox.setAttribute("aria-label", `Complete ${task.text}`);
+    checkbox.addEventListener("change", () => completeManually(task.id));
+
+    const name = document.createElement("span");
+    name.className = "task-name";
+    name.textContent = task.text;
+
+    const tools = document.createElement("div");
+    tools.className = "task-tools";
+
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "small-button";
+    edit.textContent = "Edit";
+    edit.setAttribute("aria-label", `Edit ${task.text}`);
+    edit.addEventListener("click", () => editTask(task.id));
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "small-button danger";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", `Remove ${task.text}`);
+    remove.addEventListener("click", () => removeTask(task.id));
+
+    tools.append(edit, remove);
+    row.append(checkbox, name, tools);
+    list.appendChild(row);
+  });
+}
+
+function renderDraw() {
+  const cards = $("drawCards");
+  const confirmArea = $("confirmArea");
+  const drawButton = $("drawButton");
+
+  cards.innerHTML = "";
+  confirmArea.hidden = !selectedTaskId;
+  drawButton.hidden = !!selectedTaskId;
+
+  if (!tasks.length) {
+    $("drawInstructions").textContent = "Add a task to your pond whenever you're ready.";
+    drawButton.disabled = true;
+    return;
+  }
+
+  drawButton.disabled = false;
+
+  if (!drawOptions.length) {
+    $("drawInstructions").textContent = "Let the pond choose two tasks for you.";
+    return;
+  }
+
+  if (selectedTaskId) {
+    const option = drawOptions.find(item => item.taskId === selectedTaskId);
+    const task = tasks.find(item => item.id === selectedTaskId);
+    const frog = option && getFrog(option.frogId);
+
+    if (!task || !frog) {
+      selectedTaskId = null;
       saveState();
-      render();
-    }
-
-    function deleteCompletedTask(id) {
-      completedTasks = completedTasks.filter(task => task.id !== id);
-      saveState();
-      render();
-    }
-
-    function clearCompleted() {
-      if (completedTasks.length === 0) return;
-
-      if (!confirm("Clear your completed-task history? This cannot be undone.")) {
-        return;
-      }
-
-      completedTasks = [];
-      saveState();
-      render();
-    }
-
-    function drawTwo() {
-      if (tasks.length === 0) {
-        drawIds = [];
-        renderDraw();
-        return;
-      }
-
-      const shuffled = [...tasks].sort(() => Math.random() - 0.5);
-      drawIds = shuffled.slice(0, Math.min(2, shuffled.length))
-        .map(task => task.id);
-
       renderDraw();
+      return;
     }
 
-    function chooseDrawnTask(id) {
-      completeTask(id);
-    }
+    $("confirmEmoji").textContent = frog.emoji;
+    $("confirmFrogName").textContent = frog.name;
+    $("confirmRarity").textContent = frog.rarity;
+    $("confirmRarity").className = `rarity ${getRarityClass(frog.rarity)}`;
+    $("confirmTask").textContent = task.text;
+    $("confirmProgress").textContent =
+      `${getProgress(frog.id)}% researched · Completing this task adds 12.5%.`;
 
-    function renderTasks() {
-      taskList.innerHTML = "";
+    return;
+  }
 
-      document.getElementById("poolCount").textContent =
-        `${tasks.length} task${tasks.length === 1 ? "" : "s"} in your pond`;
+  $("drawInstructions").textContent =
+    drawOptions.length === 1
+      ? "One task left in your pond! Here's its frog."
+      : "Two tasks, two frogs. Which one feels doable?";
 
-      document.getElementById("emptyPoolMessage").hidden = tasks.length > 0;
+  drawOptions.forEach(option => {
+    const task = tasks.find(item => item.id === option.taskId);
+    const frog = getFrog(option.frogId);
+    if (!task || !frog) return;
 
-      tasks.forEach(task => {
-        const li = document.createElement("li");
-        li.className = "task-item";
+    const progress = getProgress(frog.id);
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "task-checkbox";
-        checkbox.setAttribute("aria-label", `Mark ${task.text} complete`);
-        checkbox.addEventListener("change", () => completeTask(task.id));
+    const card = document.createElement("article");
+    card.className = "draw-card";
 
-        const text = document.createElement("span");
-        text.className = "task-text";
-        text.textContent = task.text;
+    const emoji = document.createElement("div");
+    emoji.className = "frog-emoji";
+    emoji.textContent = frog.emoji;
 
-        const actions = document.createElement("div");
-        actions.className = "task-actions";
+    const name = document.createElement("div");
+    name.className = "frog-name";
+    name.textContent = frog.name;
 
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.className = "small-button";
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", () => editTask(task.id));
+    const rarity = document.createElement("span");
+    rarity.className = `rarity ${getRarityClass(frog.rarity)}`;
+    rarity.textContent = frog.rarity;
 
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "small-button danger-button";
-        deleteButton.textContent = "Remove";
-        deleteButton.addEventListener("click", () => deleteTask(task.id));
+    const taskName = document.createElement("p");
+    taskName.className = "task-prompt";
+    taskName.textContent = task.text;
 
-        actions.append(editButton, deleteButton);
-        li.append(checkbox, text, actions);
-        taskList.appendChild(li);
-      });
-    }
+    const researchText = document.createElement("div");
+    researchText.className = "research-line";
+    researchText.textContent = `${progress}% researched`;
 
-    function renderDraw() {
-      drawCards.innerHTML = "";
-      drawAgainButton.hidden = tasks.length === 0;
-      drawButton.disabled = tasks.length === 0;
+    const track = document.createElement("div");
+    track.className = "progress-track";
 
-      if (tasks.length === 0) {
-        drawInstructions.textContent =
-          "Your pond is empty. Add a task to draw a frog!";
-        return;
-      }
+    const fill = document.createElement("div");
+    fill.className = "progress-fill";
+    fill.style.width = `${progress}%`;
 
-      if (drawIds.length === 0) {
-        drawInstructions.textContent =
-          "Draw two tasks when you want help deciding what to do next.";
-        return;
-      }
+    track.appendChild(fill);
 
-      const drawnTasks = drawIds
-        .map(id => tasks.find(task => task.id === id))
-        .filter(Boolean);
+    const choose = document.createElement("button");
+    choose.className = "primary-button";
+    choose.type = "button";
+    choose.textContent = "Choose this task";
+    choose.addEventListener("click", () => selectDrawOption(task.id));
 
-      if (drawnTasks.length === 1) {
-        drawInstructions.textContent =
-          "Only one frog remains in your pond. Rescue it or add more tasks!";
-      } else {
-        drawInstructions.textContent =
-          "Which frog will you rescue? Choose one to mark it complete.";
-      }
+    card.append(emoji, name, rarity, taskName, researchText, track, choose);
+    cards.appendChild(card);
+  });
+}
 
-      drawnTasks.forEach(task => {
-        const card = document.createElement("div");
-        card.className = "draw-card";
+function renderCollection() {
+  const adoptedGrid = $("adoptedGrid");
+  const researchGrid = $("researchGrid");
+  adoptedGrid.innerHTML = "";
+  researchGrid.innerHTML = "";
 
-        const text = document.createElement("p");
-        text.textContent = task.text;
+  const adopted = getAdoptedFrogs();
+  const researching = FROGS.filter(frog => getProgress(frog.id) < 100);
 
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "action-button";
-        button.textContent = "Rescue this frog";
-        button.addEventListener("click", () => chooseDrawnTask(task.id));
+  $("collectionCount").textContent =
+    `${adopted.length} of ${FROGS.length} frogs adopted`;
 
-        card.append(text, button);
-        drawCards.appendChild(card);
-      });
-    }
+  function makeTile(frog, isAdopted) {
+    const progress = getProgress(frog.id);
+    const tile = document.createElement("article");
+    tile.className = `frog-tile${isAdopted ? " adopted" : ""}`;
 
-    function renderCompleted() {
-      completedList.innerHTML = "";
+    const emoji = document.createElement("div");
+    emoji.className = "frog-emoji";
+    emoji.textContent = frog.emoji;
 
-      document.getElementById("completedCount").textContent =
-        `${completedTasks.length} rescued frog${completedTasks.length === 1 ? "" : "s"}`;
+    const name = document.createElement("div");
+    name.className = "frog-name";
+    name.textContent = frog.name;
 
-      document.getElementById("emptyCompletedMessage").hidden =
-        completedTasks.length > 0;
+    const rarity = document.createElement("div");
+    rarity.style.textAlign = "center";
+    const badge = document.createElement("span");
+    badge.className = `rarity ${getRarityClass(frog.rarity)}`;
+    badge.textContent = frog.rarity;
+    rarity.appendChild(badge);
 
-      document.getElementById("clearCompletedButton").disabled =
-        completedTasks.length === 0;
+    const status = document.createElement("div");
+    status.className = "tile-status";
+    status.textContent = isAdopted ? "♥ Adopted!" : `${progress}% researched`;
 
-      completedTasks.forEach(task => {
-        const li = document.createElement("li");
-        li.className = "task-item";
+    const track = document.createElement("div");
+    track.className = "progress-track";
+    const fill = document.createElement("div");
+    fill.className = "progress-fill";
+    fill.style.width = `${progress}%`;
+    track.appendChild(fill);
 
-        const textWrap = document.createElement("div");
-        textWrap.style.flex = "1";
-        textWrap.style.minWidth = "0";
+    tile.append(emoji, name, rarity, status, track);
+    return tile;
+  }
 
-        const text = document.createElement("span");
-        text.className = "task-text completed-text";
-        text.textContent = task.text;
-        textWrap.appendChild(text);
+  adopted.forEach(frog => adoptedGrid.appendChild(makeTile(frog, true)));
+  researching.forEach(frog => researchGrid.appendChild(makeTile(frog, false)));
 
-        if (task.completedAt) {
-          const date = document.createElement("span");
-          date.className = "completed-date";
+  if (!adopted.length) {
+    adoptedGrid.innerHTML =
+      '<p class="subtle" style="grid-column:1/-1">No adoptions yet. Your first frog is waiting!</p>';
+  }
 
-          const parsedDate = new Date(task.completedAt);
-          if (!Number.isNaN(parsedDate.getTime())) {
-            date.textContent = `Completed ${parsedDate.toLocaleDateString()}`;
-          }
+  if (!researching.length) {
+    researchGrid.innerHTML =
+      '<p class="subtle" style="grid-column:1/-1">You have researched every frog!</p>';
+  }
+}
 
-          textWrap.appendChild(date);
-        }
+function renderCompleted() {
+  const list = $("completedList");
+  list.innerHTML = "";
 
-        const actions = document.createElement("div");
-        actions.className = "task-actions";
+  $("completedCount").textContent =
+    `${completedTasks.length} task${completedTasks.length === 1 ? "" : "s"} completed`;
 
-        const restoreButton = document.createElement("button");
-        restoreButton.type = "button";
-        restoreButton.className = "small-button";
-        restoreButton.textContent = "Restore";
-        restoreButton.addEventListener("click", () => restoreTask(task.id));
+  $("emptyCompleted").hidden = completedTasks.length > 0;
+  $("clearCompleted").disabled = completedTasks.length === 0;
 
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "small-button danger-button";
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", () => deleteCompletedTask(task.id));
+  completedTasks.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "completed-row";
 
-        actions.append(restoreButton, deleteButton);
-        li.append(textWrap, actions);
-        completedList.appendChild(li);
-      });
-    }
+    const info = document.createElement("div");
+    info.style.flex = "1";
+    info.style.minWidth = "0";
 
-    function render() {
-      renderTasks();
-      renderDraw();
-      renderCompleted();
-    }
+    const name = document.createElement("div");
+    name.className = "completed-name";
+    name.textContent = task.text;
 
-    taskForm.addEventListener("submit", event => {
-      event.preventDefault();
-      addTask(taskInput.value);
-      taskInput.value = "";
-      taskInput.focus();
-    });
+    const meta = document.createElement("div");
+    meta.className = "completed-meta";
 
-    drawButton.addEventListener("click", drawTwo);
-    drawAgainButton.addEventListener("click", drawTwo);
-    document.getElementById("clearCompletedButton")
-      .addEventListener("click", clearCompleted);
+    const date = task.completedAt ? new Date(task.completedAt) : null;
+    const dateText = date && !Number.isNaN(date.getTime())
+      ? `Completed ${date.toLocaleDateString()}`
+      : "Completed";
 
-    loadState();
-    render();
-  </script>
+    const frog = task.frogId ? getFrog(task.frogId) : null;
+    meta.textContent = frog ? `${dateText} · ${frog.name} research` : dateText;
+
+    info.append(name, meta);
+
+    const tools = document.createElement("div");
+    tools.className = "completed-tools";
+
+    const restore = document.createElement("button");
+    restore.type = "button";
+    restore.className = "small-button";
+    restore.textContent = "Restore";
+    restore.addEventListener("click", () => restoreTask(task.id));
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "small-button danger";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", `Delete completed task ${task.text}`);
+    remove.addEventListener("click", () => deleteCompletedTask(task.id));
+
+    tools.append(restore, remove);
+    row.append(info, tools);
+    list.appendChild(row);
+  });
+}
+
+function renderAll() {
+  renderTasks();
+  renderDraw();
+  renderCollection();
+  renderCompleted();
+}
+
+function showNotice(html) {
+  const notice = $("rewardNotice");
+  notice.innerHTML = html;
+  notice.hidden = false;
+  notice.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function showScreen(screen) {
+  currentScreen = screen;
+
+  $("pondScreen").hidden = screen !== "pond";
+  $("collectionScreen").hidden = screen !== "collection";
+  $("completedScreen").hidden = screen !== "completed";
+
+  document.querySelectorAll(".tab-button").forEach(button => {
+    const active = button.dataset.screen === screen;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* -------------------------------------------------------
+   BUTTONS AND FORM EVENTS
+------------------------------------------------------- */
+
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const input = $("taskInput");
+  if (addTask(input.value)) {
+    input.value = "";
+    input.focus();
+  }
+});
+
+$("pasteToggle").addEventListener("click", () => {
+  const box = $("pasteBox");
+  box.hidden = !box.hidden;
+  $("pasteToggle").textContent = box.hidden
+    ? "＋ Paste a whole to-do list"
+    : "− Close bulk paste";
+  if (!box.hidden) $("bulkInput").focus();
+});
+
+$("cancelPaste").addEventListener("click", () => {
+  $("pasteBox").hidden = true;
+  $("pasteToggle").textContent = "＋ Paste a whole to-do list";
+});
+
+$("importTasks").addEventListener("click", importTasks);
+$("drawButton").addEventListener("click", drawTwo);
+$("completeChosen").addEventListener("click", () => {
+  if (!selectedTaskId) return;
+  const option = drawOptions.find(item => item.taskId === selectedTaskId);
+  if (option) completeTask(selectedTaskId, option.frogId);
+});
+$("backToChoices").addEventListener("click", returnToChoices);
+$("clearCompleted").addEventListener("click", clearCompleted);
+
+document.querySelectorAll(".tab-button").forEach(button => {
+  button.addEventListener("click", () => showScreen(button.dataset.screen));
+});
+
+/* Start up */
+loadState();
+renderAll();
+showScreen("pond");
+</script>
 </body>
 </html>
