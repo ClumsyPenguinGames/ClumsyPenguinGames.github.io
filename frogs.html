@@ -30,9 +30,7 @@
   --shadow: 0 5px 18px rgba(66, 78, 61, .09);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -40,18 +38,11 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: 'Poppins', sans-serif;
-
-  /* Leave room for the fixed navigation at every screen size. */
   padding-bottom: calc(105px + env(safe-area-inset-bottom));
 }
 
-button, input, textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
 
 button:focus-visible,
 input:focus-visible,
@@ -60,9 +51,7 @@ textarea:focus-visible {
   outline-offset: 3px;
 }
 
-[hidden] {
-  display: none !important;
-}
+[hidden] { display: none !important; }
 
 .app {
   width: min(100% - 28px, 760px);
@@ -75,9 +64,7 @@ header {
   padding: 12px 8px 20px;
 }
 
-.header-flower {
-  font-size: 2rem;
-}
+.header-flower { font-size: 2rem; }
 
 h1, h2, h3 {
   font-family: 'Baloo 2', cursive;
@@ -146,9 +133,7 @@ header p {
   color: white;
 }
 
-.primary-button:hover {
-  filter: brightness(1.08);
-}
+.primary-button:hover { filter: brightness(1.08); }
 
 .secondary-button {
   background: var(--pink-light);
@@ -196,17 +181,6 @@ textarea {
   font-weight: 700;
   font-size: .9rem;
   margin: 14px 0 6px;
-}
-
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.button-row button {
-  flex: 1 1 auto;
 }
 
 .status {
@@ -286,13 +260,8 @@ textarea {
   margin-bottom: 18px;
 }
 
-.draw-intro h2 {
-  font-size: 1.8rem;
-}
-
-.draw-intro p {
-  margin-bottom: 0;
-}
+.draw-intro h2 { font-size: 1.8rem; }
+.draw-intro p { margin-bottom: 0; }
 
 .draw-cards {
   display: grid;
@@ -328,9 +297,7 @@ textarea {
   margin: 12px 0;
 }
 
-.draw-card .progress-track {
-  margin-bottom: 16px;
-}
+.draw-card .progress-track { margin-bottom: 16px; }
 
 .choose-button {
   width: 100%;
@@ -371,9 +338,7 @@ textarea {
   margin-top: 16px;
 }
 
-.confirm-card .frog-emoji {
-  font-size: 4rem;
-}
+.confirm-card .frog-emoji { font-size: 4rem; }
 
 .confirm-card h3 {
   color: var(--pink-dark);
@@ -431,9 +396,7 @@ textarea {
   background: #f5f2ec;
 }
 
-.frog-card .frog-emoji {
-  font-size: 2.2rem;
-}
+.frog-card .frog-emoji { font-size: 2.2rem; }
 
 .frog-card h3 {
   font-size: 1rem;
@@ -442,9 +405,7 @@ textarea {
   overflow-wrap: anywhere;
 }
 
-.frog-card .progress-track {
-  margin-top: 10px;
-}
+.frog-card .progress-track { margin-top: 10px; }
 
 .frog-card p {
   font-size: .75rem;
@@ -452,7 +413,6 @@ textarea {
   margin: 4px 0;
 }
 
-/* Featured frog at the top of the Field Guide. */
 .featured-frog {
   background: var(--sage-light);
   border: 1px solid #d1dfd0;
@@ -462,9 +422,7 @@ textarea {
   text-align: center;
 }
 
-.featured-frog .frog-emoji {
-  font-size: 3.4rem;
-}
+.featured-frog .frog-emoji { font-size: 3.4rem; }
 
 .featured-frog h3 {
   color: var(--sage-dark);
@@ -489,9 +447,7 @@ textarea {
   padding: 11px 0;
 }
 
-.completed-row:last-child {
-  border-bottom: 0;
-}
+.completed-row:last-child { border-bottom: 0; }
 
 .completed-row span {
   font-size: .9rem;
@@ -504,7 +460,149 @@ textarea {
   flex: 0 0 auto;
 }
 
-/* Fixed navigation: remains at the bottom while the page scrolls. */
+/* Notification that appears above the bottom navigation. */
+.research-toast {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  transform: translate(-50%, 15px);
+  width: min(calc(100% - 28px), 440px);
+  padding: 13px 17px;
+  border-radius: 15px;
+  background: var(--sage-dark);
+  color: white;
+  text-align: center;
+  font-size: .9rem;
+  font-weight: 600;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+  pointer-events: none;
+}
+
+.research-toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+/* Reset button and warning panel. */
+.reset-panel {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 2px dashed #e8c4c0;
+}
+
+.reset-panel h3 {
+  color: #914b46;
+  margin: 0 0 5px;
+}
+
+.reset-panel p {
+  color: var(--muted);
+  font-size: .85rem;
+  line-height: 1.5;
+  margin: 5px 0 10px;
+}
+
+.reset-button {
+  background: #a83232;
+  color: white;
+  border: 2px solid #842020;
+}
+
+.reset-button:hover { background: #842020; }
+
+/* Full-screen reset confirmation. */
+.reset-overlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  background: rgba(30, 15, 15, .82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.reset-dialog {
+  width: min(100%, 520px);
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+  background: #fff8f5;
+  border: 4px solid #a83232;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 0 0 6px rgba(168, 50, 50, .2), 0 15px 50px rgba(0, 0, 0, .4);
+  text-align: center;
+}
+
+.reset-siren {
+  font-size: 2.1rem;
+  line-height: 1.5;
+}
+
+.reset-dialog h2 {
+  color: #a83232;
+  font-size: 1.8rem;
+  margin: 5px 0 10px;
+}
+
+.reset-warning {
+  background: #fbe2df;
+  border: 2px solid #d58b83;
+  border-radius: 13px;
+  padding: 13px;
+  color: #762d2d;
+  font-size: .9rem;
+  line-height: 1.5;
+  text-align: left;
+  margin: 14px 0;
+}
+
+.reset-warning ul {
+  padding-left: 22px;
+  margin: 8px 0 0;
+}
+
+.reset-acknowledgment {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  font-size: .88rem;
+  line-height: 1.45;
+  margin: 17px 0;
+}
+
+.reset-acknowledgment input {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  accent-color: #a83232;
+}
+
+.final-reset-button {
+  background: #a83232;
+  color: white;
+  width: 100%;
+}
+
+.final-reset-button:disabled {
+  background: #a99b99;
+}
+
+.cancel-reset-button {
+  width: 100%;
+  background: #e5eee2;
+  color: var(--sage-dark);
+  margin-top: 9px;
+}
+
 .tabbar {
   position: fixed;
   z-index: 20;
@@ -553,9 +651,7 @@ footer {
 }
 
 @media (min-width: 650px) {
-  .app {
-    padding-top: 30px;
-  }
+  .app { padding-top: 30px; }
 
   .tab-button {
     font-size: .82rem;
@@ -571,17 +667,9 @@ footer {
 }
 
 @media (max-width: 390px) {
-  .draw-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .panel {
-    padding: 16px;
-  }
-
-  .task-actions {
-    flex-direction: column;
-  }
+  .draw-cards { grid-template-columns: 1fr; }
+  .panel { padding: 16px; }
+  .task-actions { flex-direction: column; }
 }
 </style>
 </head>
@@ -597,7 +685,6 @@ footer {
 
   <!-- YOUR POND -->
   <section id="pondScreen" hidden>
-
     <section class="panel">
       <h2>Add tasks to your pond</h2>
       <p class="subtle">Enter one task per line. Add one, or as many as you'd like.</p>
@@ -619,12 +706,10 @@ footer {
       <p class="subtle">Check off completed tasks, or edit and remove tasks from your pool.</p>
       <div id="taskList" class="task-list"></div>
     </section>
-
   </section>
 
-  <!-- CHOOSE / FIELD RESEARCH -->
+  <!-- FIELD RESEARCH -->
   <section id="chooseScreen">
-
     <section class="panel" id="drawPanel">
       <div class="draw-intro">
         <h2>🐸 Frog field research</h2>
@@ -663,7 +748,6 @@ footer {
       <h2>Research progress</h2>
       <p class="subtle" id="pondProgress"></p>
     </section>
-
   </section>
 
   <!-- FIELD GUIDE -->
@@ -672,14 +756,24 @@ footer {
       <h2>📖 Field Guide</h2>
       <p class="subtle" id="collectionSummary"></p>
 
-      <!-- The most recently adopted frog appears here. -->
       <div id="featuredFrog"></div>
-
       <div id="frogCollection" class="frog-grid"></div>
+
+      <!-- DANGER ZONE -->
+      <div class="reset-panel">
+        <h3>🚨 Danger Zone 🚨</h3>
+        <p>
+          Finished testing? This button wipes your Frog Pond progress and
+          returns the app to a completely fresh state.
+        </p>
+        <button class="danger-button reset-button full-button" id="openResetButton">
+          🚨 RESET ALL PROGRESS 🚨
+        </button>
+      </div>
     </section>
   </section>
 
-  <!-- COMPLETED -->
+  <!-- COMPLETED TASKS -->
   <section id="completedScreen" hidden>
     <section class="panel">
       <div class="section-heading">
@@ -696,6 +790,55 @@ footer {
 
 </main>
 
+<!-- RESEARCH NOTIFICATION -->
+<div id="researchToast" class="research-toast" role="status" aria-live="polite"></div>
+
+<!-- RESET CONFIRMATION SCREEN -->
+<div id="resetOverlay" class="reset-overlay" hidden>
+  <div class="reset-dialog" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+    <div class="reset-siren">🚨🚨🚨</div>
+    <h2 id="resetTitle">TOTAL POND WIPEOUT</h2>
+    <div class="reset-siren">⚠️ THIS IS NOT A DRILL ⚠️</div>
+
+    <div class="reset-warning">
+      <strong>YOU ARE ABOUT TO PERMANENTLY DELETE:</strong>
+      <ul>
+        <li>Every task currently in your pond</li>
+        <li>Your entire completed-task history</li>
+        <li>All frog research progress and percentages</li>
+        <li>Every frog discovery in your Field Guide</li>
+        <li>Every collected/adopted frog</li>
+        <li>Any currently selected research tasks</li>
+      </ul>
+    </div>
+
+    <p>
+      This cannot be undone. Your pond will be completely empty,
+      and your frog collection will start from scratch.
+    </p>
+
+    <label class="reset-acknowledgment">
+      <input type="checkbox" id="resetAcknowledgment">
+      <span>
+        I understand that this will erase ALL of my Frog Pond progress.
+        I am absolutely, positively, undeniably sure.
+      </span>
+    </label>
+
+    <button class="danger-button final-reset-button full-button"
+            id="confirmResetButton" disabled>
+      🚨 YES. WIPE EVERYTHING. 🚨
+    </button>
+
+    <button class="quiet-button cancel-reset-button full-button" id="cancelResetButton">
+      NOPE. GET ME OUT OF HERE.
+    </button>
+
+    <div class="reset-siren">🚨 PROCEED WITH CAUTION 🚨</div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
 <nav class="tabbar" aria-label="Main navigation">
   <button class="tab-button" data-screen="pond" type="button">
     <span class="tab-icon">🪷</span>Your Pond
@@ -760,11 +903,13 @@ let state = {
   completed: [],
   research: {},
   adopted: [],
+  revealed: [],
   drawOptions: [],
   selectedTaskId: null
 };
 
 let currentScreen = "choose";
+let toastTimeout = null;
 
 const $ = id => document.getElementById(id);
 
@@ -832,20 +977,38 @@ function loadState() {
       ? saved.adopted
       : (Array.isArray(saved.adoptedFrogs) ? saved.adoptedFrogs : []);
 
+    // Load previously revealed frogs, if this version has saved them.
+    state.revealed = Array.isArray(saved.revealed)
+      ? saved.revealed
+      : [];
+
     state.drawOptions = Array.isArray(saved.drawOptions)
       ? saved.drawOptions
       : [];
 
     state.selectedTaskId = saved.selectedTaskId || null;
 
-    // Remove draw choices that no longer point to an active task.
+    // Remove choices that no longer point to an active task or valid frog.
     state.drawOptions = state.drawOptions.filter(option =>
       option &&
       state.tasks.some(task => task.id === option.taskId) &&
       FROGS.some(frog => frog.name === option.frogName)
     );
 
-    // If the selected choice is no longer valid, clear the selection.
+    // A frog in a saved research draw has already been encountered.
+    state.drawOptions.forEach(option => {
+      if (!state.revealed.includes(option.frogName)) {
+        state.revealed.push(option.frogName);
+      }
+    });
+
+    // Previously collected frogs are always considered revealed.
+    state.adopted.forEach(name => {
+      if (!state.revealed.includes(name)) {
+        state.revealed.push(name);
+      }
+    });
+
     if (
       state.selectedTaskId &&
       !state.drawOptions.some(option =>
@@ -855,7 +1018,6 @@ function loadState() {
       state.selectedTaskId = null;
     }
 
-    // Save the cleaned state so an invalid old draw cannot keep returning.
     saveState();
 
   } catch (error) {
@@ -927,7 +1089,6 @@ function editTask(id) {
   if (!task) return;
 
   const updated = prompt("Edit this task:", task.text);
-
   if (updated === null) return;
 
   const cleaned = updated.trim();
@@ -992,6 +1153,26 @@ function deleteCompletedTask(id) {
 
 
 /* --------------------------------
+   RESEARCH NOTIFICATION
+-------------------------------- */
+
+function showResearchToast(frogName) {
+  const toast = $("researchToast");
+
+  toast.textContent =
+    `🌸 +12.5% research points added toward: ${frogName}`;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3500);
+}
+
+
+/* --------------------------------
    FROG RESEARCH
 -------------------------------- */
 
@@ -1011,13 +1192,24 @@ function awardResearch(name) {
 }
 
 /*
-  Directly checking off a task now uses chooseFrog().
-  This means it follows the exact same rarity probabilities
-  as the frog paired with a task during a search.
+  Checking off a task directly in Your Pond awards research
+  toward a randomly selected frog.
+
+  If that frog has already appeared in Field Research,
+  the notification shows its name. Otherwise, it says
+  "Unknown frog" so the identity stays a surprise.
 */
 function awardRandomResearch() {
   const frog = chooseFrog();
+  const hasBeenRevealed = state.revealed.includes(frog.name);
+
   awardResearch(frog.name);
+
+  showResearchToast(
+    hasBeenRevealed ? frog.name : "Unknown frog"
+  );
+
+  return frog;
 }
 
 
@@ -1049,15 +1241,12 @@ function drawTwoTasks() {
       state.tasks.length === 1
         ? "There's only one task in your pond. Add another to search."
         : "Your pond is empty. Add some tasks first!";
+
     renderDrawScreen();
     return;
   }
 
-  /*
-    IMPORTANT FIX:
-    Clear any old or incomplete draw before making a new one.
-    This prevents stale saved choices from trapping the button.
-  */
+  // Clear any old choices before creating a fresh pair.
   state.drawOptions = [];
   state.selectedTaskId = null;
 
@@ -1072,6 +1261,12 @@ function drawTwoTasks() {
       taskId: task.id,
       frogName: frog.name
     });
+
+    // IMPORTANT: Seeing a frog here reveals its identity
+    // in the Field Guide, even before it is fully researched.
+    if (!state.revealed.includes(frog.name)) {
+      state.revealed.push(frog.name);
+    }
   }
 
   $("drawStatus").textContent = "Two new research opportunities found!";
@@ -1113,6 +1308,9 @@ function completeChosenTask() {
 
   awardResearch(selectedOption.frogName);
 
+  // This frog is known because it appeared in Field Research.
+  showResearchToast(selectedOption.frogName);
+
   // The unchosen task stays in the task pool.
   state.drawOptions = [];
   state.selectedTaskId = null;
@@ -1139,7 +1337,8 @@ function renderTaskList() {
   if (!state.tasks.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "Your pond is peaceful and empty. Add a task whenever you're ready.";
+    empty.textContent =
+      "Your pond is peaceful and empty. Add a task whenever you're ready.";
     container.appendChild(empty);
     return;
   }
@@ -1227,11 +1426,7 @@ function renderDrawScreen() {
   cards.hidden = false;
   $("drawButton").hidden = false;
 
-  /*
-    The button is only disabled when there are fewer than two tasks.
-    Existing draw options no longer disable it.
-    Searching again replaces the previous pair.
-  */
+  // The button only disables when fewer than two tasks are available.
   $("drawButton").disabled = state.tasks.length < 2;
 
   $("drawInstructions").textContent =
@@ -1247,6 +1442,7 @@ function renderDrawScreen() {
       state.tasks.length >= 2
         ? "Your next research opportunities are waiting."
         : "🌱 Add a couple of tasks to begin your field research.";
+
     cards.appendChild(message);
     return;
   }
@@ -1326,13 +1522,16 @@ function renderCollection() {
   container.replaceChildren();
   featured.replaceChildren();
 
-  $("collectionSummary").textContent =
-    `${state.adopted.length} of ${FROGS.length} frogs collected. Complete research to identify and adopt new species.`;
+  const revealedCount = FROGS.filter(frog =>
+    state.revealed.includes(frog.name) ||
+    state.adopted.includes(frog.name)
+  ).length;
 
-  /*
-    Show the most recently adopted frog at the top.
-    The last entry in the adopted array is the newest.
-  */
+  $("collectionSummary").textContent =
+    `${revealedCount} of ${FROGS.length} species discovered · ` +
+    `${state.adopted.length} collected. Complete research to adopt them!`;
+
+  // Show the most recently adopted frog at the top.
   const newestName = state.adopted[state.adopted.length - 1];
   const newestFrog = getFrog(newestName);
 
@@ -1342,7 +1541,7 @@ function renderCollection() {
 
     const label = document.createElement("div");
     label.className = "featured-label";
-    label.textContent = "Most recently discovered";
+    label.textContent = "Most recently collected";
 
     const emoji = document.createElement("div");
     emoji.className = "frog-emoji";
@@ -1362,16 +1561,17 @@ function renderCollection() {
   FROGS.forEach(frog => {
     const progress = getResearch(frog.name);
     const adopted = state.adopted.includes(frog.name);
+    const revealed = state.revealed.includes(frog.name) || adopted;
 
     const card = document.createElement("div");
-    card.className = "frog-card" + (adopted ? "" : " locked");
+    card.className = "frog-card" + (revealed ? "" : " locked");
 
     const emoji = document.createElement("div");
     emoji.className = "frog-emoji";
-    emoji.textContent = adopted ? frog.emoji : "❔";
+    emoji.textContent = revealed ? frog.emoji : "❔";
 
     const name = document.createElement("h3");
-    name.textContent = adopted ? frog.name : "Unknown frog";
+    name.textContent = revealed ? frog.name : "Unknown frog";
 
     const rarity = document.createElement("span");
     rarity.className = "rarity " + frog.rarity.toLowerCase();
@@ -1388,7 +1588,9 @@ function renderCollection() {
     const label = document.createElement("p");
     label.textContent = adopted
       ? "Collected!"
-      : `${progress}% research`;
+      : revealed
+        ? `${progress}% research`
+        : "Not yet discovered";
 
     card.append(emoji, name, rarity, track, label);
     container.appendChild(card);
@@ -1410,7 +1612,8 @@ function renderCompleted() {
   if (!state.completed.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "Nothing here yet. Every completed task will show up here.";
+    empty.textContent =
+      "Nothing here yet. Every completed task will show up here.";
     container.appendChild(empty);
     return;
   }
@@ -1444,6 +1647,50 @@ function renderCompleted() {
 
 
 /* --------------------------------
+   RESET ALL PROGRESS
+-------------------------------- */
+
+function openResetConfirmation() {
+  $("resetAcknowledgment").checked = false;
+  $("confirmResetButton").disabled = true;
+  $("resetOverlay").hidden = false;
+}
+
+function closeResetConfirmation() {
+  $("resetOverlay").hidden = true;
+}
+
+function resetAllProgress() {
+  // Clear any notification that might still be visible.
+  clearTimeout(toastTimeout);
+  $("researchToast").classList.remove("show");
+
+  // Replace all saved progress with a completely fresh state.
+  state = {
+    tasks: [],
+    completed: [],
+    research: {},
+    adopted: [],
+    revealed: [],
+    drawOptions: [],
+    selectedTaskId: null
+  };
+
+  // Remove the old saved data, then save the clean starting state.
+  localStorage.removeItem(STORAGE_KEY);
+  saveState();
+
+  closeResetConfirmation();
+  showScreen("choose");
+
+  $("drawStatus").textContent =
+    "Your pond has been reset. A fresh research adventure awaits! 🌱";
+
+  renderAll();
+}
+
+
+/* --------------------------------
    RENDER EVERYTHING
 -------------------------------- */
 
@@ -1469,13 +1716,29 @@ $("backToChoices").addEventListener("click", backToChoices);
 $("clearCompletedButton").addEventListener("click", () => {
   if (!state.completed.length) return;
 
-  if (!confirm("Clear your completed-task history? This will not affect your active tasks or frog research.")) {
+  if (!confirm(
+    "Clear your completed-task history? This will not affect your active tasks or frog research."
+  )) {
     return;
   }
 
   state.completed = [];
   saveState();
   renderAll();
+});
+
+// Reset confirmation controls.
+$("openResetButton").addEventListener("click", openResetConfirmation);
+$("cancelResetButton").addEventListener("click", closeResetConfirmation);
+
+$("resetAcknowledgment").addEventListener("change", event => {
+  $("confirmResetButton").disabled = !event.target.checked;
+});
+
+$("confirmResetButton").addEventListener("click", () => {
+  if (!$("resetAcknowledgment").checked) return;
+
+  resetAllProgress();
 });
 
 
