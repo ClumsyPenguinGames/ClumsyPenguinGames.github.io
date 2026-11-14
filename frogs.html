@@ -367,6 +367,15 @@ footer{text-align:center;color:var(--muted);font-size:.75rem;padding:12px}
   color:var(--muted);
   font-weight:700;
 }
+  /* Inactive task bulk selection */
+.completed-row.inactive-selection-mode {
+  cursor: pointer;
+}
+
+.completed-row.selected {
+  outline: 2px solid var(--sage-dark);
+  background: #eff7ed;
+}
 </style>
 </head>
 
@@ -471,12 +480,23 @@ footer{text-align:center;color:var(--muted);font-size:.75rem;padding:12px}
 
   <section id="completedScreen" hidden>
     <section class="panel">
-      <div class="section-heading">
-        <h2>🌱 Inactive tasks</h2>
-        <span class="count-label" id="inactiveCount"></span>
-      </div>
+ <div class="section-heading">
+  <h2>🌱 Inactive tasks</h2>
+  <div class="task-heading-actions">
+    <span class="count-label" id="inactiveCount"></span>
+    <button type="button" class="small-button" id="toggleInactiveSelectionButton">Select</button>
+  </div>
+</div>
       <p class="subtle">Tasks you've completed are kept here. Activate one again whenever you need to do it another time.</p>
       <div id="inactiveList"></div>
+      <div id="inactiveBulkActionBar" class="bulk-action-bar" hidden>
+  <strong id="inactiveBulkSelectionCount">0 tasks selected</strong>
+  <div class="bulk-action-buttons">
+    <button type="button" class="small-button" id="activateSelectedInactiveButton">Activate 0 tasks</button>
+    <button type="button" class="small-button remove" id="deleteSelectedInactiveButton">Delete 0 tasks</button>
+    <button type="button" class="quiet-button" id="cancelInactiveSelectionButton">Cancel</button>
+  </div>
+</div>
     </section>
 
     <section class="panel">
@@ -587,6 +607,9 @@ let toastTimeout = null;
 // Temporary bulk-selection state. This is not saved to localStorage.
 let selectionMode = false;
 let selectedTaskIds = new Set();
+
+  let inactiveSelectionMode = false;
+let selectedInactiveTaskIds = new Set();
 
 const $ = id => document.getElementById(id);
 
@@ -801,6 +824,123 @@ function deleteInactiveTask(id){
   if(!task) return;
   if(!confirm(`Permanently remove "${task.text}" from your inactive tasks? Its completion history will remain.`)) return;
   state.inactiveTasks=state.inactiveTasks.filter(t=>t.id!==id);
+  saveState();
+  renderAll();
+}
+
+  function updateInactiveBulkSelectionDisplay() {
+  const count = selectedInactiveTaskIds.size;
+  const button = $("toggleInactiveSelectionButton");
+  const bar = $("inactiveBulkActionBar");
+
+  if (button) {
+    button.textContent = inactiveSelectionMode ? "Cancel" : "Select";
+  }
+
+  if ($("inactiveBulkSelectionCount")) {
+    $("inactiveBulkSelectionCount").textContent =
+      `${count} ${count === 1 ? "task" : "tasks"} selected`;
+  }
+
+  if ($("activateSelectedInactiveButton")) {
+    $("activateSelectedInactiveButton").textContent =
+      `Activate ${count} ${count === 1 ? "task" : "tasks"}`;
+    $("activateSelectedInactiveButton").disabled = count === 0;
+  }
+
+  if ($("deleteSelectedInactiveButton")) {
+    $("deleteSelectedInactiveButton").textContent =
+      `Delete ${count} ${count === 1 ? "task" : "tasks"}`;
+    $("deleteSelectedInactiveButton").disabled = count === 0;
+  }
+
+  if (bar) {
+    bar.hidden = !inactiveSelectionMode;
+  }
+}
+
+function toggleInactiveSelectionMode() {
+  inactiveSelectionMode = !inactiveSelectionMode;
+  selectedInactiveTaskIds.clear();
+  renderInactiveTasks();
+}
+
+function cancelInactiveSelection() {
+  inactiveSelectionMode = false;
+  selectedInactiveTaskIds.clear();
+  renderInactiveTasks();
+}
+
+function toggleInactiveTaskSelection(id) {
+  if (!inactiveSelectionMode) return;
+
+  if (selectedInactiveTaskIds.has(id)) {
+    selectedInactiveTaskIds.delete(id);
+  } else {
+    selectedInactiveTaskIds.add(id);
+  }
+
+  renderInactiveTasks();
+}
+
+function getSelectedInactiveTasks() {
+  return state.inactiveTasks.filter(task =>
+    selectedInactiveTaskIds.has(task.id)
+  );
+}
+
+function activateSelectedInactiveTasks() {
+  const selected = getSelectedInactiveTasks();
+  if (!selected.length) return;
+
+  // Match the existing individual activation behavior:
+  // don't activate a task that is already active.
+  const toActivate = selected.filter(task =>
+    !state.tasks.some(active => active.id === task.id)
+  );
+
+  const ids = new Set(toActivate.map(task => task.id));
+
+  toActivate.forEach(task => {
+    state.tasks.push(task);
+  });
+
+  state.inactiveTasks = state.inactiveTasks.filter(task =>
+    !ids.has(task.id)
+  );
+
+  inactiveSelectionMode = false;
+  selectedInactiveTaskIds.clear();
+
+  saveState();
+  renderAll();
+
+  if (toActivate.length) {
+    showScreen("pond");
+  }
+}
+
+function deleteSelectedInactiveTasks() {
+  const selected = getSelectedInactiveTasks();
+  if (!selected.length) return;
+
+  const count = selected.length;
+
+  if (!confirm(
+    `Permanently delete ${count} selected ${count === 1 ? "task" : "tasks"} from inactive tasks? Their completion history will remain.`
+  )) {
+    return;
+  }
+
+  const ids = new Set(selected.map(task => task.id));
+
+  state.inactiveTasks = state.inactiveTasks.filter(task =>
+    !ids.has(task.id)
+  );
+
+  inactiveSelectionMode = false;
+  selectedInactiveTaskIds.clear();
+
   saveState();
   renderAll();
 }
@@ -1616,43 +1756,74 @@ function renderCollection(){
 -------------------------------- */
 
 function renderInactiveTasks(){
-  const container=$("inactiveList");
+  const container = $("inactiveList");
   container.replaceChildren();
-  $("inactiveCount").textContent=`${state.inactiveTasks.length} inactive`;
+
+  $("inactiveCount").textContent =
+    `${state.inactiveTasks.length} inactive`;
+
+  updateInactiveBulkSelectionDisplay();
 
   if(!state.inactiveTasks.length){
-    const empty=document.createElement("div");
-    empty.className="empty-state";
-    empty.textContent="Completed tasks will appear here so you can activate them again later.";
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent =
+      "Completed tasks will appear here so you can activate them again later.";
     container.appendChild(empty);
     return;
   }
 
-  state.inactiveTasks.forEach(task=>{
-    const row=document.createElement("div");
-    row.className="completed-row";
+  state.inactiveTasks.forEach(task => {
+    const row = document.createElement("div");
 
-    const text=document.createElement("span");
-    text.textContent=task.text;
+    row.className =
+      "completed-row" +
+      (inactiveSelectionMode ? " inactive-selection-mode" : "") +
+      (selectedInactiveTaskIds.has(task.id) ? " selected" : "");
 
-    const actions=document.createElement("div");
-    actions.className="completed-actions";
+    // Tapping anywhere on the card selects or deselects it.
+    row.addEventListener("click", () => {
+      if (inactiveSelectionMode) {
+        toggleInactiveTaskSelection(task.id);
+      }
+    });
 
-    const activate=document.createElement("button");
-    activate.className="small-button";
-    activate.textContent="Activate";
-    activate.addEventListener("click",()=>activateTask(task.id));
+    const text = document.createElement("span");
+    text.textContent = task.text;
 
-    const remove=document.createElement("button");
-    remove.className="small-button remove";
-    remove.textContent="×";
-    remove.setAttribute("aria-label",`Delete inactive task ${task.text}`);
-    remove.addEventListener("click",()=>deleteInactiveTask(task.id));
+    const actions = document.createElement("div");
+    actions.className = "completed-actions";
 
-    actions.append(activate,remove);
-    row.append(text,actions);
+    const activate = document.createElement("button");
+    activate.className = "small-button";
+    activate.textContent = "Activate";
+
+    activate.addEventListener("click", () => {
+      if (!inactiveSelectionMode) {
+        activateTask(task.id);
+      }
+    });
+
+    const remove = document.createElement("button");
+    remove.className = "small-button remove";
+    remove.textContent = "×";
+    remove.setAttribute(
+      "aria-label",
+      `Delete inactive task ${task.text}`
+    );
+
+    remove.addEventListener("click", () => {
+      if (!inactiveSelectionMode) {
+        deleteInactiveTask(task.id);
+      }
+    });
+
+    actions.append(activate, remove);
+    row.append(text, actions);
     container.appendChild(row);
   });
+
+  updateInactiveBulkSelectionDisplay();
 }
 
 function renderCompletedHistory(){
@@ -1748,7 +1919,26 @@ function renderAll(){
    EVENT LISTENERS
 -------------------------------- */
 
-$("toggleSelectionButton").addEventListener(
+$("toggleInactiveSelectionButton").addEventListener(
+  "click",
+  toggleInactiveSelectionMode
+);
+
+$("cancelInactiveSelectionButton").addEventListener(
+  "click",
+  cancelInactiveSelection
+);
+
+$("activateSelectedInactiveButton").addEventListener(
+  "click",
+  activateSelectedInactiveTasks
+);
+
+$("deleteSelectedInactiveButton").addEventListener(
+  "click",
+  deleteSelectedInactiveTasks
+);
+  $("toggleSelectionButton").addEventListener(
   "click",
   toggleSelectionMode
 );
