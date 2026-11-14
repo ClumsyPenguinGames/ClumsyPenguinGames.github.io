@@ -289,6 +289,84 @@ footer{text-align:center;color:var(--muted);font-size:.75rem;padding:12px}
   .task-settings{grid-template-columns:1fr 1fr}
   .stats-grid{gap:5px}
 }
+  /* BULK TASK SELECTION */
+
+.task-heading-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.task-row{
+  cursor:default;
+  transition:border-color .15s, background .15s;
+}
+
+.task-row.selection-mode{
+  cursor:pointer;
+}
+
+.task-row.selected{
+  border:2px solid var(--sage-dark);
+  background:#edf5e9;
+}
+
+.task-row.selection-mode .task-settings button{
+  cursor:pointer;
+}
+
+.bulk-action-bar{
+  position:sticky;
+  bottom:85px;
+  z-index:5;
+  margin-top:14px;
+  padding:14px;
+  background:#fffefa;
+  border:2px solid var(--sage-dark);
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.10);
+}
+
+.bulk-action-heading{
+  font-weight:700;
+  margin-bottom:10px;
+  text-align:center;
+}
+
+.bulk-action-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.bulk-action-buttons button{
+  flex:1;
+  min-width:0;
+  border:0;
+  border-radius:10px;
+  padding:11px 7px;
+  font-size:.85rem;
+  font-weight:700;
+}
+
+.bulk-deactivate{
+  background:var(--sage);
+  color:var(--sage-dark);
+}
+
+.bulk-delete{
+  background:#f8e2df;
+  color:#914b46;
+}
+
+.bulk-cancel{
+  display:block;
+  margin:9px auto 0;
+  padding:6px 14px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-weight:700;
+}
 </style>
 </head>
 
@@ -311,12 +389,33 @@ footer{text-align:center;color:var(--muted);font-size:.75rem;padding:12px}
     </section>
 
     <section class="panel">
-      <div class="section-heading">
-        <h2>Your active tasks</h2>
-        <span class="count-label" id="activeTaskCount"></span>
-      </div>
+<div class="section-heading">
+  <h2>Your active tasks</h2>
+  <div class="task-heading-actions">
+    <span class="count-label" id="activeTaskCount"></span>
+    <button type="button" class="small-button" id="toggleSelectionButton">
+      Select
+    </button>
+  </div>
+</div>
       <p class="subtle">Check off completed tasks, or edit their details. Your task settings determine the XP and research earned.</p>
       <div id="taskList" class="task-list"></div>
+      <div id="bulkActionBar" class="bulk-action-bar" hidden>
+  <div class="bulk-action-heading" id="bulkSelectionCount">
+    0 tasks selected
+  </div>
+  <div class="bulk-action-buttons">
+    <button type="button" class="bulk-deactivate" id="bulkDeactivateButton">
+      Deactivate 0 tasks
+    </button>
+    <button type="button" class="bulk-delete" id="bulkDeleteButton">
+      Delete 0 tasks
+    </button>
+  </div>
+  <button type="button" class="bulk-cancel" id="bulkCancelButton">
+    Cancel
+  </button>
+</div>
     </section>
   </section>
 
@@ -484,6 +583,11 @@ let state = {
 
 let currentScreen = "choose";
 let toastTimeout = null;
+
+// Temporary bulk-selection state. This is not saved to localStorage.
+let selectionMode = false;
+let selectedTaskIds = new Set();
+
 const $ = id => document.getElementById(id);
 
 /* --------------------------------
@@ -700,7 +804,130 @@ function deleteInactiveTask(id){
   saveState();
   renderAll();
 }
+/* --------------------------------
+  BULK TASK SELECTION
+-------------------------------- */
 
+function updateBulkSelectionDisplay(){
+  const count=selectedTaskIds.size;
+
+  $("toggleSelectionButton").textContent=
+    selectionMode ? "Cancel" : "Select";
+
+  $("bulkActionBar").hidden=!selectionMode || count===0;
+
+  $("bulkSelectionCount").textContent=
+    `${count} ${count===1?"task":"tasks"} selected`;
+
+  $("bulkDeactivateButton").textContent=
+    `Deactivate ${count} ${count===1?"task":"tasks"}`;
+
+  $("bulkDeleteButton").textContent=
+    `Delete ${count} ${count===1?"task":"tasks"}`;
+}
+
+function toggleSelectionMode(){
+  if(selectionMode){
+    cancelTaskSelection();
+    return;
+  }
+
+  selectionMode=true;
+  selectedTaskIds.clear();
+
+  renderTaskList();
+}
+
+function toggleTaskSelection(id){
+  if(!selectionMode) return;
+
+  if(selectedTaskIds.has(id)){
+    selectedTaskIds.delete(id);
+  }else{
+    selectedTaskIds.add(id);
+  }
+
+  renderTaskList();
+}
+
+function cancelTaskSelection(){
+  selectionMode=false;
+  selectedTaskIds.clear();
+
+  renderTaskList();
+}
+
+function deactivateSelectedTasks(){
+  const selected=state.tasks.filter(task=>
+    selectedTaskIds.has(task.id)
+  );
+
+  if(!selected.length) return;
+
+  const ids=new Set(selected.map(task=>task.id));
+
+  // Move tasks to the existing inactive task library.
+  selected.forEach(task=>{
+    if(!state.inactiveTasks.some(inactive=>inactive.id===task.id)){
+      state.inactiveTasks.unshift({...task});
+    }
+  });
+
+  // Remove them from the active pool.
+  state.tasks=state.tasks.filter(task=>!ids.has(task.id));
+
+  // Remove any affected research choices.
+  state.drawOptions=state.drawOptions.filter(
+    option=>!ids.has(option.taskId)
+  );
+
+  if(state.selectedTaskId && ids.has(state.selectedTaskId)){
+    state.selectedTaskId=null;
+  }
+
+  selectionMode=false;
+  selectedTaskIds.clear();
+
+  saveState();
+  renderAll();
+}
+
+function deleteSelectedTasks(){
+  const selected=state.tasks.filter(task=>
+    selectedTaskIds.has(task.id)
+  );
+
+  if(!selected.length) return;
+
+  const count=selected.length;
+
+  if(!confirm(
+    `Permanently delete ${count} selected ${count===1?"task":"tasks"}? This will remove them from your active and inactive task lists. Existing completion history will remain.`
+  )) return;
+
+  const ids=new Set(selected.map(task=>task.id));
+
+  state.tasks=state.tasks.filter(task=>!ids.has(task.id));
+
+  // Also remove these tasks from the inactive library, if present.
+  state.inactiveTasks=state.inactiveTasks.filter(
+    task=>!ids.has(task.id)
+  );
+
+  state.drawOptions=state.drawOptions.filter(
+    option=>!ids.has(option.taskId)
+  );
+
+  if(state.selectedTaskId && ids.has(state.selectedTaskId)){
+    state.selectedTaskId=null;
+  }
+
+  selectionMode=false;
+  selectedTaskIds.clear();
+
+  saveState();
+  renderAll();
+}
 /* --------------------------------
    REWARDS AND PLAYER LEVELS
 -------------------------------- */
@@ -990,10 +1217,13 @@ function makeSettingSelect(task,setting,label,options){
   return wrapper;
 }
 
+
 function renderTaskList(){
   const container=$("taskList");
   container.replaceChildren();
+
   $("activeTaskCount").textContent=`${state.tasks.length} active`;
+  updateBulkSelectionDisplay();
 
   if(!state.tasks.length){
     const empty=document.createElement("div");
@@ -1007,11 +1237,29 @@ function renderTaskList(){
     const row=document.createElement("div");
     row.className="task-row";
 
-    // Checkbox
+    if(selectionMode){
+      row.classList.add("selection-mode");
+    }
+
+    if(selectedTaskIds.has(task.id)){
+      row.classList.add("selected");
+    }
+
+    // Clicking anywhere on the card selects it in selection mode.
+    row.addEventListener("click",()=>{
+      if(selectionMode){
+        toggleTaskSelection(task.id);
+      }
+    });
+
+    // Completion checkbox: hidden during selection mode.
     const checkbox=document.createElement("input");
     checkbox.type="checkbox";
+    checkbox.hidden=selectionMode;
     checkbox.setAttribute("aria-label",`Mark ${task.text} complete`);
-    checkbox.addEventListener("change",()=>completePoolTask(task.id));
+    checkbox.addEventListener("change",()=>{
+      if(!selectionMode) completePoolTask(task.id);
+    });
 
     // Task name
     const name=document.createElement("span");
@@ -1026,7 +1274,9 @@ function renderTaskList(){
     edit.type="button";
     edit.className="small-button";
     edit.textContent="Edit";
-    edit.addEventListener("click",()=>editTask(task.id));
+    edit.addEventListener("click",()=>{
+      if(!selectionMode) editTask(task.id);
+    });
 
     const remove=document.createElement("button");
     remove.type="button";
@@ -1034,11 +1284,13 @@ function renderTaskList(){
     remove.textContent="×";
     remove.setAttribute("aria-label",`Remove ${task.text}`);
     remove.title="Remove task";
-    remove.addEventListener("click",()=>removeTask(task.id));
+    remove.addEventListener("click",()=>{
+      if(!selectionMode) removeTask(task.id);
+    });
 
     actions.append(edit,remove);
 
-    // Toggle controls
+    // Task tags
     const settings=document.createElement("div");
     settings.className="task-settings";
 
@@ -1046,17 +1298,28 @@ function renderTaskList(){
       const button=document.createElement("button");
       button.type="button";
       button.className="task-toggle";
+
       if(className) button.classList.add(className);
+
       button.textContent=label;
       button.title=description;
       button.setAttribute("aria-label",description);
-      button.addEventListener("click",cycle);
+
+      button.addEventListener("click",()=>{
+        if(!selectionMode) cycle();
+      });
+
       settings.appendChild(button);
     }
 
     // Spoons: Low → Medium → High → Low
     const spoonLevels=["low","medium","high"];
-    const spoonIcons={low:"🥄",medium:"🥄🥄",high:"🥄🥄🥄"};
+    const spoonIcons={
+      low:"🥄",
+      medium:"🥄🥄",
+      high:"🥄🥄🥄"
+    };
+
     const spoonValue=task.spoons || "medium";
     const spoonIndex=spoonLevels.indexOf(spoonValue);
 
@@ -1079,7 +1342,9 @@ function renderTaskList(){
       "🕷",
       isScary,
       isScary ? "scary" : "",
-      isScary ? "Scary task. Tap to turn off." : "Normal task. Tap to mark as scary.",
+      isScary
+        ? "Scary task. Tap to turn off."
+        : "Normal task. Tap to mark as scary.",
       ()=>{
         task.scariness=isScary ? "normal" : "scary";
         saveState();
@@ -1089,15 +1354,23 @@ function renderTaskList(){
 
     // Priority: Low → Normal → High → Low
     const priorities=["low","normal","high"];
-    const priorityIcons={low:"↓",normal:"—",high:"↑"};
+    const priorityIcons={
+      low:"↓",
+      normal:"—",
+      high:"↑"
+    };
+
     const priorityValue=task.priority || "normal";
     const priorityIndex=priorities.indexOf(priorityValue);
 
     makeToggle(
       priorityIcons[priorityValue] || "—",
       priorityValue,
-      priorityValue==="low" ? "priority-low" :
-        priorityValue==="high" ? "priority-high" : "",
+      priorityValue==="low"
+        ? "priority-low"
+        : priorityValue==="high"
+          ? "priority-high"
+          : "",
       `Priority: ${priorityValue}. Tap to change priority.`,
       ()=>{
         task.priority=priorities[(priorityIndex+1)%priorities.length];
@@ -1109,7 +1382,10 @@ function renderTaskList(){
     row.append(checkbox,name,actions,settings);
     container.appendChild(row);
   });
+
+  updateBulkSelectionDisplay();
 }
+
 
 /* --------------------------------
    RENDER RESEARCH SCREEN
@@ -1472,7 +1748,25 @@ function renderAll(){
    EVENT LISTENERS
 -------------------------------- */
 
-$("addBulkButton").addEventListener("click",addBulkTasks);
+$("toggleSelectionButton").addEventListener(
+  "click",
+  toggleSelectionMode
+);
+
+$("bulkDeactivateButton").addEventListener(
+  "click",
+  deactivateSelectedTasks
+);
+
+$("bulkDeleteButton").addEventListener(
+  "click",
+  deleteSelectedTasks
+);
+
+$("bulkCancelButton").addEventListener(
+  "click",
+  cancelTaskSelection
+);$("addBulkButton").addEventListener("click",addBulkTasks);
 $("drawButton").addEventListener("click",drawTwoTasks);
 $("completeChosen").addEventListener("click",completeChosenTask);
 $("backToChoices").addEventListener("click",backToChoices);
