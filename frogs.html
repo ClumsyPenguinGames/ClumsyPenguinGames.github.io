@@ -65,23 +65,91 @@ textarea{min-height:125px;resize:vertical}
 .status{color:var(--muted);font-size:.85rem;margin:10px 0 0;min-height:1.2em}
 .task-list{display:grid;gap:10px;margin-top:14px}
 .task-row{
-  display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;
-  background:#fffefa;border:1px solid var(--border);border-radius:13px;padding:11px
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
 }
-.task-row input[type="checkbox"]{width:22px;height:22px;accent-color:var(--sage-dark)}
-.task-name{min-width:0;overflow-wrap:anywhere;font-size:.92rem;align-self:center}
-.task-actions{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
-.task-settings{
-  grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:7px;margin-top:3px
+
+.task-row input[type="checkbox"]{
+  width:22px;
+  height:22px;
+  accent-color:var(--sage-dark);
 }
-.task-settings label{font-size:.7rem;color:var(--muted);font-weight:700}
-.task-settings select{font-size:.78rem;padding:7px 5px;margin-top:3px}
+
+.task-name{
+  min-width:0;
+  overflow-wrap:anywhere;
+  font-size:.92rem;
+  align-self:center;
+}
+
+.task-actions{
+  grid-column:auto;
+  display:flex;
+  gap:5px;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+
 .small-button{
-  border:0;border-radius:9px;padding:7px 9px;background:var(--lavender);
-  color:var(--lavender-dark);font-size:.8rem;font-weight:700
+  border:0;
+  border-radius:9px;
+  padding:6px 9px;
+  background:var(--lavender);
+  color:var(--lavender-dark);
+  font-size:.76rem;
+  font-weight:700;
 }
-.small-button.remove{background:#f8e2df;color:#914b46}
+
+.small-button.remove{
+  background:#f8e2df;
+  color:#914b46;
+  font-size:1.15rem;
+  line-height:1;
+  padding:5px 9px;
+}
+
+.task-settings{
+  grid-column:2/4;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:0;
+}
+
+.task-toggle{
+  border:1px solid var(--border, #ddd);
+  border-radius:9px;
+  padding:6px 10px;
+  background:var(--cream);
+  color:var(--muted);
+  font-size:.85rem;
+  cursor:pointer;
+  min-width:42px;
+}
+
+.task-toggle.active{
+  background:var(--sage);
+  color:var(--sage-dark);
+  border-color:var(--sage-dark);
+}
+
+.task-toggle.priority-low{
+  background:#f8e2df;
+  color:#914b46;
+  border-color:#e8bcb5;
+}
+
+.task-toggle.priority-high{
+  background:#e2eee0;
+  color:#416b48;
+  border-color:#a9c6a5;
+}
+
+.task-toggle.scary{
+  background:#f4e3ed;
+  color:#934c75;
+  border-color:#d9aec5;
+}
 .count-label{color:var(--muted);font-size:.82rem;font-weight:600}
 .section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .draw-intro{text-align:center;margin-bottom:18px}
@@ -931,42 +999,103 @@ function renderTaskList(){
     const row=document.createElement("div");
     row.className="task-row";
 
+    // Checkbox
     const checkbox=document.createElement("input");
     checkbox.type="checkbox";
     checkbox.setAttribute("aria-label",`Mark ${task.text} complete`);
     checkbox.addEventListener("change",()=>completePoolTask(task.id));
 
+    // Task name
     const name=document.createElement("span");
     name.className="task-name";
     name.textContent=task.text;
 
+    // Edit and remove buttons
     const actions=document.createElement("div");
     actions.className="task-actions";
 
     const edit=document.createElement("button");
+    edit.type="button";
     edit.className="small-button";
     edit.textContent="Edit";
     edit.addEventListener("click",()=>editTask(task.id));
 
     const remove=document.createElement("button");
+    remove.type="button";
     remove.className="small-button remove";
-    remove.textContent="Remove";
+    remove.textContent="×";
+    remove.setAttribute("aria-label",`Remove ${task.text}`);
+    remove.title="Remove task";
     remove.addEventListener("click",()=>removeTask(task.id));
 
     actions.append(edit,remove);
 
+    // Toggle controls
     const settings=document.createElement("div");
     settings.className="task-settings";
-    settings.append(
-      makeSettingSelect(task,"spoons","Spoons",[
-        {value:"low",label:"Low"},{value:"medium",label:"Medium"},{value:"high",label:"High"}
-      ]),
-      makeSettingSelect(task,"scariness","Scariness",[
-        {value:"normal",label:"Normal"},{value:"scary",label:"Scary"}
-      ]),
-      makeSettingSelect(task,"priority","Priority",[
-        {value:"low",label:"Low"},{value:"normal",label:"Normal"},{value:"high",label:"High"}
-      ])
+
+    function makeToggle(label,value,className,description,cycle){
+      const button=document.createElement("button");
+      button.type="button";
+      button.className="task-toggle";
+      if(className) button.classList.add(className);
+      button.textContent=label;
+      button.title=description;
+      button.setAttribute("aria-label",description);
+      button.addEventListener("click",cycle);
+      settings.appendChild(button);
+    }
+
+    // Spoons: Low → Medium → High → Low
+    const spoonLevels=["low","medium","high"];
+    const spoonIcons={low:"🥄",medium:"🥄🥄",high:"🥄🥄🥄"};
+    const spoonValue=task.spoons || "medium";
+    const spoonIndex=spoonLevels.indexOf(spoonValue);
+
+    makeToggle(
+      spoonIcons[spoonValue] || "🥄🥄",
+      spoonValue,
+      "active",
+      `Effort: ${spoonValue}. Tap to change effort.`,
+      ()=>{
+        task.spoons=spoonLevels[(spoonIndex+1)%spoonLevels.length];
+        saveState();
+        renderTaskList();
+      }
+    );
+
+    // Scariness: Normal ↔ Scary
+    const isScary=task.scariness==="scary";
+
+    makeToggle(
+      "🕷",
+      isScary,
+      isScary ? "scary" : "",
+      isScary ? "Scary task. Tap to turn off." : "Normal task. Tap to mark as scary.",
+      ()=>{
+        task.scariness=isScary ? "normal" : "scary";
+        saveState();
+        renderTaskList();
+      }
+    );
+
+    // Priority: Low → Normal → High → Low
+    const priorities=["low","normal","high"];
+    const priorityIcons={low:"↓",normal:"—",high:"↑"};
+    const priorityValue=task.priority || "normal";
+    const priorityIndex=priorities.indexOf(priorityValue);
+
+    makeToggle(
+      priorityIcons[priorityValue] || "—",
+      priorityValue,
+      priorityValue==="low" ? "priority-low" :
+        priorityValue==="high" ? "priority-high" : "",
+      `Priority: ${priorityValue}. Tap to change priority.`,
+      ()=>{
+        task.priority=priorities[(priorityIndex+1)%priorities.length];
+        saveState();
+        renderTaskList();
+      }
     );
 
     row.append(checkbox,name,actions,settings);
